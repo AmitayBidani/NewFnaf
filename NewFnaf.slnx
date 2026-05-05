@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="NewFnaf/NewFnaf.vcxproj" Id="ae9d4746-b6ce-4b52-9c6b-329462b3b321" />
+</Solution>
