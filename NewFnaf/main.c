@@ -1,5 +1,7 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <curses.h>
+#include "draw.h"
+#include "colors.h"
 
 void drawPixel(int y, int x, int colorpair);
 
@@ -11,11 +13,9 @@ int main() {
     keypad(stdscr, TRUE);
 
     start_color();
-
-    init_color(20, 235, 522, 902);
+    colors();
     init_pair(1, COLOR_WHITE, 20);
-    init_pair(2, COLOR_WHITE, 20);
-    init_pair(3, COLOR_WHITE, COLOR_BLUE);
+    init_pair(2, COLOR_WHITE, COLOR_BLUE);
 
 
     int selected = 0;
@@ -30,7 +30,6 @@ int main() {
         clear();
         wbkgd(stdscr, COLOR_PAIR(1));
 
-
         attron(A_BOLD);
 
         int text[5][16] = {
@@ -40,42 +39,22 @@ int main() {
             {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1}
         };
 
-        attron(COLOR_PAIR(1));
+        drawArt(3, 3, 16, 5, 1, text);
 
-        for (int y = 0; y < 5; y++) {
-            for (int x = 0; x < 16; x++)
-            {
-                if (text[y][x] == 1) {
-                    drawPixel(y + 5, x + 5, COLOR_PAIR(1));
-                }
-                else {
-                    mvprintw(y + 5, x + 5, " ");
-                }
-
-            }
-        }
-        attroff(COLOR_PAIR(1));
-
-        
-        attroff(A_BOLD);
-
-        
 
         for (int i = 0; i < 3; i++)
         {
             if (i == selected) {
-                attron(COLOR_PAIR(3));
-                mvprintw(10 + i, 10, options[i]);
-                attroff(COLOR_PAIR(3));
-            }
-            else {
                 attron(COLOR_PAIR(2));
                 mvprintw(10 + i, 10, options[i]);
                 attroff(COLOR_PAIR(2));
             }
+            else {
+                attron(COLOR_PAIR(1));
+                mvprintw(10 + i, 10, options[i]);
+                attroff(COLOR_PAIR(1));
+            }
         }
-
-        mvprintw(15, 10, "(%d)", selected);
         
         refresh();
         
@@ -90,16 +69,14 @@ int main() {
             case ALT_ENTER:
                 break;
 
+
         }
+
+        attroff(A_BOLD);
 
     }
 
 }
 
-void drawPixel(int y, int x, int colorpair) {
-    attron(colorpair);
-    mvaddch(y, x, ACS_BLOCK);
-    attroff(colorpair);
 
-}
 
