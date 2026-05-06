@@ -52,6 +52,7 @@ int main() {
                     mvprintw(y + 5, x + 5, " ");
                 }
 
+            }
         }
         attroff(COLOR_PAIR(1));
 
