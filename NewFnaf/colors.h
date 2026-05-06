@@ -3,6 +3,6 @@
 
 void colors() {
 	
-	init_color(20, 235, 522, 902);
+	init_color(20, 658, 227, 196);
 	
 }
