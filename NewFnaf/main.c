@@ -1,5 +1,7 @@
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include <curses.h>
+
+void drawPixel(int y, int x, int colorpair);
 
 int main() {
     initscr();
@@ -28,8 +30,32 @@ int main() {
         clear();
         wbkgd(stdscr, COLOR_PAIR(1));
 
+
         attron(A_BOLD);
-        mvprintw(7, 10, "FNAF 2");
+
+        int text[5][16] = {
+            {1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1},
+            {1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1},
+            {1, 1, 0, 1, 0 ,1, 1, 0, 1, 1 ,1 ,0 ,1 ,1, 0, 1},
+            {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1}
+        };
+
+        attron(COLOR_PAIR(1));
+
+        for (int y = 0; y < 5; y++) {
+            for (int x = 0; x < 16; x++)
+            {
+                if (text[y][x] == 1) {
+                    drawPixel(y + 5, x + 5, COLOR_PAIR(1));
+                }
+                else {
+                    mvprintw(y + 5, x + 5, " ");
+                }
+
+        }
+        attroff(COLOR_PAIR(1));
+
+        
         attroff(A_BOLD);
 
         
@@ -68,3 +94,11 @@ int main() {
     }
 
 }
+
+void drawPixel(int y, int x, int colorpair) {
+    attron(colorpair);
+    mvaddch(y, x, ACS_BLOCK);
+    attroff(colorpair);
+
+}
+
