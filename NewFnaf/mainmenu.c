@@ -7,7 +7,7 @@ void showMainMenu() {
 
 
     init_pair(1, COLOR_WHITE, 20);
-    init_pair(2, COLOR_WHITE, COLOR_BLUE);
+    init_pair(2, COLOR_WHITE, COLOR_RED);
 
 
     int selected = 0;
