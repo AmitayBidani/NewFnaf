@@ -8,6 +8,7 @@ void showMainMenu() {
 
     init_pair(1, COLOR_WHITE, 20);
     init_pair(2, COLOR_WHITE, COLOR_RED);
+    init_pair(3, 21, COLOR_RED);
 
 
     int selected = 0;
@@ -23,28 +24,41 @@ void showMainMenu() {
         clear();
         wbkgd(stdscr, COLOR_PAIR(1));
 
+
+        attron(COLOR_PAIR(3));
+        border(ACS_BLOCK, ACS_BLOCK, ACS_BLOCK, ACS_BLOCK,
+            ACS_BLOCK, ACS_BLOCK, ACS_BLOCK, ACS_BLOCK);
+        attroff(COLOR_PAIR(3));
+
         attron(A_BOLD);
 
-        int text[5][16] = {
-            {1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1},
-            {1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1},
-            {1, 1, 0, 1, 0 ,1, 1, 0, 1, 1 ,1 ,0 ,1 ,1, 0, 1},
-            {1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1}
+        //The Title (Name Of The Game)
+        int text[5][26] = {
+            {1, 1, 1,0 , 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0,0 , 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 1, 1,0 , 1, 0 ,1, 1, 0, 1, 1 ,1 ,0 ,1 ,1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0,0 , 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}
         };
 
-        drawArt(3, 3, 16, 5, 1, text);
+        int line[5][26] = {
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        };
+
+        drawArt(3, 3, 26, 5, 1, text);
+
+        drawArt(9, 3, 26, 1, 1, line);
 
 
         for (int i = 0; i < 3; i++)
         {
             if (i == selected) {
                 attron(COLOR_PAIR(2));
-                mvprintw(10 + i, 10, options[i]);
+                mvprintw(12 + i, 12, options[i]);
                 attroff(COLOR_PAIR(2));
             }
             else {
                 attron(COLOR_PAIR(1));
-                mvprintw(10 + i, 10, options[i]);
+                mvprintw(12 + i, 12, options[i]);
                 attroff(COLOR_PAIR(1));
             }
         }
@@ -59,7 +73,7 @@ void showMainMenu() {
         case KEY_DOWN:
             selected = (selected + 1) % 3;
             break;
-        case 10: // IF PRESSED ENTER
+        case 10: // PRESSED ENTER
             running = false;
             break;
         }
@@ -70,6 +84,8 @@ void showMainMenu() {
 }
 
 
+
+//This function is running only when you press enter!
 void click(int selected) {
     switch (selected) {
         case 0:
