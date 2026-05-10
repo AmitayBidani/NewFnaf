@@ -22,9 +22,10 @@ void showMainMenu() {
     bool running = true;
     while (running) {
         clear();
+        //paint background
         wbkgd(stdscr, COLOR_PAIR(1));
 
-
+        //paint a border
         attron(COLOR_PAIR(3));
         border(ACS_BLOCK, ACS_BLOCK, ACS_BLOCK, ACS_BLOCK,
             ACS_BLOCK, ACS_BLOCK, ACS_BLOCK, ACS_BLOCK);
