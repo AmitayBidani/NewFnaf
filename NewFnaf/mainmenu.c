@@ -2,14 +2,17 @@
 #include <curses.h>
 #include <stdbool.h>
 #include "mainmenu.h"
+#include "images.h"
+
+
+
 
 void showMainMenu() {
 
 
     init_pair(1, COLOR_WHITE, 20);
     init_pair(2, COLOR_WHITE, COLOR_RED);
-    init_pair(3, 21, COLOR_RED);
-
+    init_pair(3, 16+36 * 4 + 6 * 4 + 4, COLOR_RED);
 
     int selected = 0;
     int key;
@@ -30,8 +33,9 @@ void showMainMenu() {
         border(ACS_BLOCK, ACS_BLOCK, ACS_BLOCK, ACS_BLOCK,
             ACS_BLOCK, ACS_BLOCK, ACS_BLOCK, ACS_BLOCK);
         attroff(COLOR_PAIR(3));
+        
+        
 
-        attron(A_BOLD);
 
         //The Title (Name Of The Game)
         int text[5][26] = {
@@ -64,6 +68,10 @@ void showMainMenu() {
             }
         }
 
+
+        drawImage(0,0, BACKGROUND_WIDTH,BACKGROUND_HEIGHT, background_pixels);
+
+
         refresh();
 
         key = getch();
@@ -78,7 +86,7 @@ void showMainMenu() {
             running = false;
             break;
         }
-        attroff(A_BOLD);
+
     }
 
     click(selected);
