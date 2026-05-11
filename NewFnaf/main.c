@@ -10,10 +10,13 @@ int main() {
     cbreak();
     curs_set(0);
 
+
+
     keypad(stdscr, TRUE);
     
     start_color();
     use_default_colors();
+    initHexColors();
 
     showMainMenu();
 

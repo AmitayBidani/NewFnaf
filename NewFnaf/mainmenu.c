@@ -10,9 +10,9 @@
 void showMainMenu() {
 
 
-    init_pair(1, COLOR_WHITE, 20);
-    init_pair(2, COLOR_WHITE, COLOR_RED);
-    init_pair(3, 16+36 * 4 + 6 * 4 + 4, COLOR_RED);
+    init_pair(1, getColor(255, 255, 255), getColor(215, 0, 0));
+    init_pair(2, getColor(255,255,255), getColor(135, 0, 0));
+    init_pair(3, getColor(135, 0, 0), getColor(215, 0, 0));
 
     int selected = 0;
     int key;
@@ -33,9 +33,6 @@ void showMainMenu() {
         border(ACS_BLOCK, ACS_BLOCK, ACS_BLOCK, ACS_BLOCK,
             ACS_BLOCK, ACS_BLOCK, ACS_BLOCK, ACS_BLOCK);
         attroff(COLOR_PAIR(3));
-        
-        
-
 
         //The Title (Name Of The Game)
         int text[5][26] = {
@@ -68,10 +65,6 @@ void showMainMenu() {
             }
         }
 
-
-        drawImage(0,0, BACKGROUND_WIDTH,BACKGROUND_HEIGHT, background_pixels);
-
-
         refresh();
 
         key = getch();
@@ -101,6 +94,7 @@ void click(int selected) {
             while (1) {
                 clear();
                 mvprintw(5, 5, "in game!!");
+                drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels);
 
                 refresh();
             }

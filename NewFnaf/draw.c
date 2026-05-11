@@ -1,6 +1,16 @@
 #include <curses.h>
 #include "draw.h"
 
+
+//Register all the colors from numbers as an pair we can use.
+void initHexColors() {
+    for (int color = 16; color <= 255; color++) {
+        int colorPair = (color - 16) + 20;
+        init_pair(colorPair, color, COLOR_BLACK);
+    }
+}
+
+
 void drawArt(int y_offcet, int x_offcet, int width, int height, int colorpair, int *art) {
 
     for (int y = 0; y < height; y++) {
@@ -19,7 +29,6 @@ void drawArt(int y_offcet, int x_offcet, int width, int height, int colorpair, i
     }
 }
 
-
 void drawPixel(int y, int x, int colorpair) {
     attron(colorpair);
     mvaddch(y, x*2, ACS_BLOCK);
@@ -35,13 +44,14 @@ void drawPixelHEX(int y, int x, int hex) {
 
     int colorPair = (color - 16) + 20;
 
-    init_pair(colorPair, color, COLOR_BLACK);
     drawPixel(y, x, COLOR_PAIR(colorPair));
 
 }
 
+
+
 void HexToRGB(int hex, int *r,int *g,int *b) {
-    /* >> moves 1 bit forward || &0xFF gets the last 2 digits in the hex
+    /* >> moves (the number you chose) bits forward || &0xFF gets the last 2 digits in the hex
     * and in that way we can get a hex number that represent rgb colors: 0xRRGGBB
     * to an actual numbers we can work with.
     */ 
@@ -53,10 +63,13 @@ void HexToRGB(int hex, int *r,int *g,int *b) {
 
 int getColor(int red, int green, int blue) {
 
-    // if its grey we 
+    // detect if we entered a grey color
     if (red == green && green == blue) {
+        //if its a really dark grey we will just use black in index 16.
         if (red < 8) return 16;
+        //if its a really light grey we will just use white in index 231
         if (red > 238) return 231;
+        //if its not black or white we will use the pallete between 232-255, so we have 24 colors of grey.
         return 232 + (red - 8) / 10;
     }
 
@@ -79,41 +92,4 @@ void drawImage(int xOffcet, int yOffcet, int width, int height, int *image) {
         }
     }
 }
-
-//for testing
-void drawPalette(void) {
-    int levels[6] = { 0, 95, 135, 175, 215, 255 };
-
-    mvprintw(1, 2, "RGB cube: rows = red, groups = green, inside group = blue");
-
-    for (int r = 0; r < 6; r++) {
-        for (int g = 0; g < 6; g++) {
-            for (int b = 0; b < 6; b++) {
-                int hex = (levels[r] << 16) | (levels[g] << 8) | levels[b];
-                int y = 3 + r;
-                int x = 2 + g * 7 + b;
-                drawPixelHEX(y, x, hex);
-            }
-        }
-    }
-
-    mvprintw(11, 2, "Grayscale");
-
-    for (int i = 0; i < 24; i++) {
-        int gray = 8 + i * 10;
-        int hex = (gray << 16) | (gray << 8) | gray;
-        drawPixelHEX(13, 2 + i, hex);
-    }
-
-    mvprintw(15, 2, "Basic test colors");
-    drawPixelHEX(17, 2, 0xFF0000);
-    drawPixelHEX(17, 3, 0x00FF00);
-    drawPixelHEX(17, 4, 0x0000FF);
-    drawPixelHEX(17, 5, 0xFFFF00);
-    drawPixelHEX(17, 6, 0x00FFFF);
-    drawPixelHEX(17, 7, 0xFF00FF);
-    drawPixelHEX(17, 8, 0xFFFFFF);
-}
-
-
 
