@@ -47,17 +47,6 @@ void drawPixelHEX(int y, int x, int hex) {
     drawPixel(y, x, COLOR_PAIR(colorPair));
 
 }
-/*
-* 
-RGB 0 - 255
-RGB 0 - 5
-RGB 0 - 1000
-
-
-*/
-
-
-
 
 void HexToRGB(int hex, int *r,int *g,int *b) {
     /* >> moves (the number you chose) bits forward || &0xFF gets the last 2 digits in the hex
@@ -71,6 +60,8 @@ void HexToRGB(int hex, int *r,int *g,int *b) {
 }
 
 int getColor(int red, int green, int blue) {
+
+    //we are converting the RGB number from 0-255 range for every color to 0-5 range.
 
     // detect if we entered a grey color
     if (red == green && green == blue) {
