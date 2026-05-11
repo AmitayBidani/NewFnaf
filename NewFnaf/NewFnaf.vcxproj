@@ -130,11 +130,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="draw.c" />
+    <ClCompile Include="game.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="mainmenu.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="draw.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="images.h" />
     <ClInclude Include="mainmenu.h" />
   </ItemGroup>
