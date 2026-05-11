@@ -17,6 +17,7 @@ void drawArt(int y_offcet, int x_offcet, int width, int height, int colorpair, i
         for (int x = 0; x < width; x++)
         {
 
+
             int value = art[y * width + x];
 
             if (value == 1) {
