@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "mainmenu.h"
 #include "images.h"
+#include "game.h"
 
 
 
@@ -91,13 +92,7 @@ void showMainMenu() {
 void click(int selected) {
     switch (selected) {
         case 0:
-            while (1) {
-                clear();
-                mvprintw(5, 5, "in game!!");
-                drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels);
-
-                refresh();
-            }
+            showGame();
             break;
         case 1:
             while (1) {
