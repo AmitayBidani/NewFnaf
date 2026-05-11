@@ -1,8 +1,10 @@
-#include "draw.h"
 #include <curses.h>
 #include <stdbool.h>
-#include "mainmenu.h"
+
+#include "draw.h"
 #include "images.h"
+
+#include "mainmenu.h"
 #include "game.h"
 
 
