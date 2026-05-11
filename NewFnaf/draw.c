@@ -47,6 +47,15 @@ void drawPixelHEX(int y, int x, int hex) {
     drawPixel(y, x, COLOR_PAIR(colorPair));
 
 }
+/*
+* 
+RGB 0 - 255
+RGB 0 - 5
+RGB 0 - 1000
+
+
+*/
+
 
 
 
@@ -56,8 +65,8 @@ void HexToRGB(int hex, int *r,int *g,int *b) {
     * to an actual numbers we can work with.
     */ 
 
-    *r = (hex >> 16) & 0xFF;
-    *g = (hex >> 8) & 0xFF;
+    *r = (hex >> 4*4) & 0xFF;
+    *g = (hex >> 4*2) & 0xFF;
     *b = hex & 0xFF;
 }
 

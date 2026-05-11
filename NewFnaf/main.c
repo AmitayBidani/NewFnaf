@@ -1,5 +1,7 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
+
 #include <curses.h>
+
 #include "draw.h"
 #include "mainmenu.h"
 
