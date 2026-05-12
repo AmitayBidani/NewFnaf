@@ -31,6 +31,12 @@ void showGame() {
         mvprintw(25, 30, "90");
         attroff(COLOR_PAIR(6));
 
+        //Show Mask
+        //drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
+
+        //Show Light
+        //drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
+
         drawPixelHEX(25, 7, 0xffd700);
         drawPixelHEX(25, 8, 0xffd700);
         drawPixelHEX(25, 9, 0xffd700);
@@ -41,6 +47,12 @@ void showGame() {
 
         // END
 
+        //
+        
+        //Keyboard Input
+
+
+        //
 
         refresh();
         //makes the program stop for 33ms for us to get 30 FPS.
