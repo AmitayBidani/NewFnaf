@@ -39,39 +39,31 @@ void drawPixel(int y, int x, int colorpair) {
 
 void drawPixelHEX(int y, int x, int hex) {
 
-    int r, g, b;
-    HexToRGB(hex, &r, &g, &b);
-    int color = getColor(r, g, b);
+    if (hex != -1) {
+        int r, g, b;
+        HexToRGB(hex, &r, &g, &b);
+        int color = getColor(r, g, b);
 
-    int colorPair = (color - 16) + 20;
+        int colorPair = (color - 16) + 20;
 
-    drawPixel(y, x, COLOR_PAIR(colorPair));
-
+        drawPixel(y, x, COLOR_PAIR(colorPair));
+    }
 }
-/*
-* 
-RGB 0 - 255
-RGB 0 - 5
-RGB 0 - 1000
-
-
-*/
-
-
-
 
 void HexToRGB(int hex, int *r,int *g,int *b) {
     /* >> moves (the number you chose) bits forward || &0xFF gets the last 2 digits in the hex
     * and in that way we can get a hex number that represent rgb colors: 0xRRGGBB
     * to an actual numbers we can work with.
     */ 
-
-    *r = (hex >> 4*4) & 0xFF;
-    *g = (hex >> 4*2) & 0xFF;
+    *r = (hex >> 4 * 4) & 0xFF;
+    *g = (hex >> 4 * 2) & 0xFF;
     *b = hex & 0xFF;
+    
 }
 
 int getColor(int red, int green, int blue) {
+
+    //we are converting the RGB number from 0-255 range for every color to 0-5 range.
 
     // detect if we entered a grey color
     if (red == green && green == blue) {
@@ -96,9 +88,7 @@ void drawImage(int xOffcet, int yOffcet, int width, int height, int *image) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++)
         {
-
             drawPixelHEX(y + yOffcet, x + xOffcet, image[y * width + x]);
-
         }
     }
 }
