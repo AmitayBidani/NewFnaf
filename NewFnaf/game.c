@@ -8,13 +8,15 @@ void showGame() {
 
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
     init_pair(6, getColor(255, 215, 0), getColor(29, 29, 29));
-    bool start = FALSE;
+    bool mask = FALSE;
+    bool light = FALSE;
 
-
+    int battery = 100;
+    int BatteryDrop = time(NULL);
     while (1) {
         clear();
         char key;
-
+        
         // START
 
         drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels);
@@ -30,14 +32,26 @@ void showGame() {
 
 
         attron(COLOR_PAIR(6));
-        mvprintw(25, 30, "90");
+        mvprintw(25, 30,"%d",battery);
         attroff(COLOR_PAIR(6));
 
         //Show Mask
-        if (start) {
+        if (mask) {
             drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
         }
 
+        if (battery > 1) {
+            if (light) {
+                drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
+                 int now = time(NULL);
+
+                if (now - BatteryDrop == 4 && battery > 0) {
+                        battery= battery - 1;
+                        BatteryDrop = now;
+                }
+        }
+  
+        }
         //drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
 
         //Show Light
@@ -49,7 +63,7 @@ void showGame() {
         drawPixelHEX(25, 10, 0xffd700);
         drawPixelHEX(25, 11, 0xffd700);
         drawPixelHEX(25, 12, 0xffd700);
-        drawPixelHEX(25, 13, 0x333333);
+        drawPixelHEX(25, 13, 0xffd700);
 
         // END
 
@@ -63,8 +77,11 @@ void showGame() {
             break;
         case 'm':
         case 'M':
-            start = !start;
+            mask = !mask;
             break;
+        case 'l':
+        case 'L':
+            light = !light;
 
         }
 
