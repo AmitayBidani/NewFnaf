@@ -53,6 +53,9 @@ void showMainMenu() {
         refresh();
 
         key = getch();
+
+
+
         switch (key) {
         case KEY_UP:
             selected = (selected - 1 + 4) % 4;
@@ -66,7 +69,7 @@ void showMainMenu() {
         }
 
     }
-    
+
     click(selected);
 }
 
