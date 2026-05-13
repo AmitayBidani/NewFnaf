@@ -3,16 +3,19 @@
 #include "draw.h"
 #include "images.h"
 #include "game.h"
+
+static int FPS = 30;
+
 void showGame() {
     nodelay(stdscr, TRUE);
 
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
     init_pair(6, getColor(255, 215, 0), getColor(29, 29, 29));
-    bool mask = FALSE;
-    bool light = FALSE;
+    bool mask = false;
+    bool light = false;
 
-    int battery = 100;
-    int BatteryDrop = time(NULL);
+    int battery = 5000;
+
     while (1) {
         clear();
         char key;
@@ -32,10 +35,9 @@ void showGame() {
 
 
         attron(COLOR_PAIR(6));
-        mvprintw(25, 30,"%d",battery);
+        mvprintw(25, 30,"%d",(int)(battery*2/100));
         attroff(COLOR_PAIR(6));
 
-        //Show Mask
         if (mask) {
             drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
         }
@@ -43,19 +45,9 @@ void showGame() {
         if (battery > 1) {
             if (light) {
                 drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
-                 int now = time(NULL);
-
-                if (now - BatteryDrop == 4 && battery > 0) {
-                        battery= battery - 1;
-                        BatteryDrop = now;
-                }
+                battery--;
+            }
         }
-  
-        }
-        //drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
-
-        //Show Light
-        //drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
 
         drawPixelHEX(25, 7, 0xffd700);
         drawPixelHEX(25, 8, 0xffd700);
@@ -66,6 +58,7 @@ void showGame() {
         drawPixelHEX(25, 13, 0xffd700);
 
         // END
+        refresh();
 
         //shahar!!
         key = getch();
@@ -78,14 +71,18 @@ void showGame() {
         case 'm':
         case 'M':
             mask = !mask;
+            light = false;
             break;
         case 'l':
         case 'L':
             light = !light;
+            mask = false;
 
         }
+        napms((int)(1000 / FPS));
 
     }
+    
 
     nodelay(stdscr, FALSE);
     
