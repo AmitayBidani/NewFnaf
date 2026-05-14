@@ -1,92 +1,154 @@
 #include <curses.h>
 #include <stdbool.h>
+
+
 #include "draw.h"
 #include "images.h"
+
+#include "cameras.h"
 #include "game.h"
+
+static int FPS = 30;
+
 void showGame() {
     nodelay(stdscr, TRUE);
 
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
     init_pair(6, getColor(255, 215, 0), getColor(29, 29, 29));
-    bool mask = FALSE;
-    bool light = FALSE;
+    init_pair(7, getColor(255, 255, 255), getColor(19, 19, 19));
+
+    bool mask = false;
+    bool light = false;
+
+    bool keyLocked = false;
+
+    bool resetScreen = true;
 
     int battery = 100;
-    int BatteryDrop = time(NULL);
+    int batteryTimer = 0;
+    int key = 0;
+
+    int radio = 100;
+    int radioTimer = 0;
+
+
+    Scene scene = MAIN_GAME;
+    
+
     while (1) {
-        clear();
-        char key;
+
+        radioTimer++;
+        if (radioTimer >= FPS) {
+            radioTimer = 0;
+            if(radio > 0)
+                radio--;
+        }
         
+
+        if (light) {
+            batteryTimer++;
+            if (batteryTimer >= FPS*2) {
+                battery--;
+                batteryTimer = 0;
+                resetScreen = true;
+                if (battery <= 0)
+                    light = false;
+            }
+        }
+
         // START
 
-        drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels);
-        attron(COLOR_PAIR(5));
-        mvprintw(25, 5, "Battery:");
+        if (scene == MAIN_GAME) {
+            if (resetScreen) {
+                if (resetScreen) resetScreen = false;
+
+                erase();
+                drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels);
+
+                attron(COLOR_PAIR(5));
+                mvprintw(25, 5, "Battery:");
 
 
-        mvprintw(27, 5, "Controls: ");
-        mvprintw(27, 5, "C - Open camera   L - Use Flashlight   M - Toggle Mask ");
-        mvprintw(28, 5, "Q - Quit");
+                mvprintw(27, 5, "Controls: ");
+                mvprintw(27, 5, "C - Open camera   L - Use Flashlight   M - Toggle Mask ");
+                mvprintw(28, 5, "Q - Quit");
 
-        attroff(COLOR_PAIR(5));
+                attroff(COLOR_PAIR(5));
+                mvprintw(29, 5, "%d", radio);
 
 
-        attron(COLOR_PAIR(6));
-        mvprintw(25, 30,"%d",battery);
-        attroff(COLOR_PAIR(6));
+                attron(COLOR_PAIR(6));
+                mvprintw(25, 30, "%d", battery);
+                attroff(COLOR_PAIR(6));
 
-        //Show Mask
-        if (mask) {
-            drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
-        }
-
-        if (battery > 1) {
-            if (light) {
-                drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
-                 int now = time(NULL);
-
-                if (now - BatteryDrop == 4 && battery > 0) {
-                        battery= battery - 1;
-                        BatteryDrop = now;
+                if (mask) {
+                    drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
                 }
-        }
-  
-        }
-        //drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
 
-        //Show Light
-        //drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
+                if (battery > 0 && light) {
+                    drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
+                }
 
-        drawPixelHEX(25, 7, 0xffd700);
-        drawPixelHEX(25, 8, 0xffd700);
-        drawPixelHEX(25, 9, 0xffd700);
-        drawPixelHEX(25, 10, 0xffd700);
-        drawPixelHEX(25, 11, 0xffd700);
-        drawPixelHEX(25, 12, 0xffd700);
-        drawPixelHEX(25, 13, 0xffd700);
+                drawPixelHEX(25, 7, 0xffd700);
+                drawPixelHEX(25, 8, 0xffd700);
+                drawPixelHEX(25, 9, 0xffd700);
+                drawPixelHEX(25, 10, 0xffd700);
+                drawPixelHEX(25, 11, 0xffd700);
+                drawPixelHEX(25, 12, 0xffd700);
+                drawPixelHEX(25, 13, 0xffd700);
+
+                mvprintw(0, 0, "%d", key);
+
+                refresh();
+            }
+        }
+        else if (scene == CAMERA) {
+            scene = MAIN_GAME;
+            cameraWindow(&radio, &radioTimer, FPS);
+            resetScreen = true;
+            
+        }
 
         // END
 
-        //shahar!!
-        key = getch();
+        /*
+        * For us to remove the delay after spamming a key, we need to get all the inputs
+        * that we had before, and stop the loop when we stopped getting a key input in a row.
+        */
+        int ch;
+        key = ERR;
+        while ((ch = getch()) != ERR) {
+            key = ch;
+        }
+        
 
-        switch (key) {
-        case 'Q':
-        case 'q':
-            return;
-            break;
-        case 'm':
-        case 'M':
-            mask = !mask;
-            break;
-        case 'l':
-        case 'L':
-            light = !light;
+        if (key != ERR) {
+            resetScreen = true;
+            switch (key) {
+            case 'Q':
+            case 'q':
+                return;
+                break;
+            case 'M':
+            case 'm':
+                mask = !mask;
+                light = false;
+                break;
+            case 'L':
+            case 'l':
+                light = !light;
+                mask = false;
+                break;
+            case 'C':
+            case 'c':
+                scene = CAMERA;
+                break;
+            }
 
         }
-
+        
+        napms(1000 / FPS);
     }
-
     nodelay(stdscr, FALSE);
     
 }
