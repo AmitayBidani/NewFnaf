@@ -1,7 +1,11 @@
 #include <curses.h>
 #include <stdbool.h>
+
+
 #include "draw.h"
 #include "images.h"
+
+#include "cameras.h"
 #include "game.h"
 
 static int FPS = 30;
@@ -11,75 +15,98 @@ void showGame() {
 
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
     init_pair(6, getColor(255, 215, 0), getColor(29, 29, 29));
+    init_pair(7, getColor(255, 255, 255), getColor(19, 19, 19));
+
     bool mask = false;
     bool light = false;
 
     bool keyLocked = false;
 
-    int battery = 100;
-    int batteryTimer = 0;
-    int key = 0;
-    int keyCooldown = 0;
+    bool resetScreen = false;
 
+    int battery = 100;
+    int batteryTimer = 1;
+    int key = 0;
+
+    int radio = 100;
+    int radioTimer = 0;
+
+
+    Scene scene = MAIN_GAME;
+    
 
     while (1) {
 
-        if (keyCooldown > 0)
-            keyCooldown--;
-
-        if (battery <= 0)
-            light = false;
+        radioTimer++;
+        if (radioTimer >= FPS) {
+            radioTimer = 0;
+            if(radio > 0)
+                radio--;
+        }
+        
 
         if (light) {
             batteryTimer++;
             if (batteryTimer >= FPS*2) {
                 battery--;
                 batteryTimer = 0;
+                if (battery <= 0)
+                    light = false;
             }
         }
 
         // START
 
-        if (key != -1 || batteryTimer == 0) {
-            erase();
-            drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels);
+        if (scene == MAIN_GAME) {
+            if (key != -1 || batteryTimer == 0 || resetScreen) {
+                if (resetScreen) resetScreen = false;
 
-            attron(COLOR_PAIR(5));
-            mvprintw(25, 5, "Battery:");
+                erase();
+                drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels);
 
-
-            mvprintw(27, 5, "Controls: ");
-            mvprintw(27, 5, "C - Open camera   L - Use Flashlight   M - Toggle Mask ");
-            mvprintw(28, 5, "Q - Quit");
-
-            attroff(COLOR_PAIR(5));
+                attron(COLOR_PAIR(5));
+                mvprintw(25, 5, "Battery:");
 
 
-            attron(COLOR_PAIR(6));
-            mvprintw(25, 30, "%d", (int)battery);
-            attroff(COLOR_PAIR(6));
+                mvprintw(27, 5, "Controls: ");
+                mvprintw(27, 5, "C - Open camera   L - Use Flashlight   M - Toggle Mask ");
+                mvprintw(28, 5, "Q - Quit");
 
-            if (mask) {
-                drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
+                attroff(COLOR_PAIR(5));
+                mvprintw(29, 5, "%d", radio);
+
+
+                attron(COLOR_PAIR(6));
+                mvprintw(25, 30, "%d", battery);
+                attroff(COLOR_PAIR(6));
+
+                if (mask) {
+                    drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
+                }
+
+                if (battery > 0 && light) {
+                    drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
+                }
+
+                drawPixelHEX(25, 7, 0xffd700);
+                drawPixelHEX(25, 8, 0xffd700);
+                drawPixelHEX(25, 9, 0xffd700);
+                drawPixelHEX(25, 10, 0xffd700);
+                drawPixelHEX(25, 11, 0xffd700);
+                drawPixelHEX(25, 12, 0xffd700);
+                drawPixelHEX(25, 13, 0xffd700);
+
+                mvprintw(0, 0, "%d", key);
+
+                refresh();
             }
-
-            if (battery > 0 && light) {
-                drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
-            }
-
-            drawPixelHEX(25, 7, 0xffd700);
-            drawPixelHEX(25, 8, 0xffd700);
-            drawPixelHEX(25, 9, 0xffd700);
-            drawPixelHEX(25, 10, 0xffd700);
-            drawPixelHEX(25, 11, 0xffd700);
-            drawPixelHEX(25, 12, 0xffd700);
-            drawPixelHEX(25, 13, 0xffd700);
-
-            mvprintw(0, 0, "%d", key);
-
-            refresh();
         }
-        
+        else if (scene == CAMERA) {
+            scene = MAIN_GAME;
+            cameraWindow(&radio, &radioTimer, FPS);
+            resetScreen = true;
+            
+        }
 
         // END
 
@@ -94,7 +121,7 @@ void showGame() {
         }
         
 
-        if (key != ERR && keyCooldown == 0) {
+        if (key != ERR) {
             switch (key) {
             case 'Q':
             case 'q':
@@ -109,15 +136,18 @@ void showGame() {
             case 'l':
                 light = !light;
                 mask = false;
-
+                break;
+            case 'C':
+            case 'c':
+                scene = CAMERA;
+                break;
             }
+
         }
         
         napms(1000 / FPS);
     }
     nodelay(stdscr, FALSE);
-
-    
     
 }
 

@@ -129,12 +129,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cameras.c" />
     <ClCompile Include="draw.c" />
     <ClCompile Include="game.c" />
+    <ClCompile Include="images.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="mainmenu.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cameras.h" />
     <ClInclude Include="draw.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="images.h" />
