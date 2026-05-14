@@ -18,7 +18,7 @@ void showMainMenu() {
     init_pair(3, getColor(255, 255, 255), getColor(18, 18, 18));
 
     int selected = 0;
-    int key;
+    int key = 0;
     char* options[] = {
         "- Start",
         "- How To Play",
@@ -28,45 +28,48 @@ void showMainMenu() {
 
     bool running = true;
     while (running) {
-        clear();
 
-        drawImage(0, 0, MENU_WIDTH, MENU_HEIGHT, menu_pixels);
+        if (key != -1) {
+            erase();
+            drawImage(0, 0, MENU_WIDTH, MENU_HEIGHT, menu_pixels);
 
 
-        for (int i = 0; i < 4; i++)
-        {
-            if (i == selected) {
-                attron(COLOR_PAIR(2));
-                mvprintw(15 + i, 26, options[i]);
-                attroff(COLOR_PAIR(2));
+            for (int i = 0; i < 4; i++)
+            {
+                if (i == selected) {
+                    attron(COLOR_PAIR(2));
+                    mvprintw(15 + i, 26, options[i]);
+                    attroff(COLOR_PAIR(2));
+                }
+                else {
+                    attron(COLOR_PAIR(1));
+                    mvprintw(15 + i, 26, options[i]);
+                    attroff(COLOR_PAIR(1));
+                }
             }
-            else {
-                attron(COLOR_PAIR(1));
-                mvprintw(15 + i, 26, options[i]);
-                attroff(COLOR_PAIR(1));
+            attron(COLOR_PAIR(3));
+            mvprintw(29, 2, "Arrow Up - Up   Arrow Down - Down   Enter - Select");
+            attroff(COLOR_PAIR(3));
+
+            refresh();
+
+            key = getch();
+
+
+
+            switch (key) {
+            case KEY_UP:
+                selected = (selected - 1 + 4) % 4;
+                break;
+            case KEY_DOWN:
+                selected = (selected + 1) % 4;
+                break;
+            case 10: // PRESSED ENTER
+                running = false;
+                break;
             }
         }
-        attron(COLOR_PAIR(3));
-        mvprintw(29, 2, "Arrow Up - Up   Arrow Down - Down   Enter - Select");
-        attroff(COLOR_PAIR(3));
-
-        refresh();
-
-        key = getch();
-
-
-
-        switch (key) {
-        case KEY_UP:
-            selected = (selected - 1 + 4) % 4;
-            break;
-        case KEY_DOWN:
-            selected = (selected + 1) % 4;
-            break;
-        case 10: // PRESSED ENTER
-            running = false;
-            break;
-        }
+        
 
     }
 
