@@ -22,10 +22,10 @@ void showGame() {
 
     bool keyLocked = false;
 
-    bool resetScreen = false;
+    bool resetScreen = true;
 
     int battery = 100;
-    int batteryTimer = 1;
+    int batteryTimer = 0;
     int key = 0;
 
     int radio = 100;
@@ -50,6 +50,7 @@ void showGame() {
             if (batteryTimer >= FPS*2) {
                 battery--;
                 batteryTimer = 0;
+                resetScreen = true;
                 if (battery <= 0)
                     light = false;
             }
@@ -58,7 +59,7 @@ void showGame() {
         // START
 
         if (scene == MAIN_GAME) {
-            if (key != -1 || batteryTimer == 0 || resetScreen) {
+            if (resetScreen) {
                 if (resetScreen) resetScreen = false;
 
                 erase();
@@ -122,6 +123,7 @@ void showGame() {
         
 
         if (key != ERR) {
+            resetScreen = true;
             switch (key) {
             case 'Q':
             case 'q':
