@@ -16,8 +16,7 @@ void showGame() {
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
     init_pair(6, getColor(255, 215, 0), getColor(29, 29, 29));
     init_pair(7, getColor(255, 255, 255), getColor(19, 19, 19));
-    init_pair(8, COLOR_YELLOW, COLOR_BLACK);
-
+    init_pair(8, getColor(200, 200, 200), getColor(19, 19, 19));
 
     bool mask = false;
     bool light = false;
@@ -144,6 +143,8 @@ void showGame() {
                 break;
             case 'C':
             case 'c':
+                mask = false;
+                light = false;
                 scene = CAMERA;
                 break;
             }
