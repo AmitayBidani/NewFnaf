@@ -33,6 +33,10 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
         }
 
         //ADD GLITCH EFFECT
+
+        
+        
+
         glitchTimer++;
         for (int i = 0; i < GLITCH_PIXELS; i++)
         {
@@ -50,9 +54,6 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
             if(glitchTimer >= 3)
                 drawPixelHEX(glitchedPixels[i].y, glitchedPixels[i].x, 0x252525);
         }
-
-        if (glitchTimer >= 3) glitchTimer = 0;
-        refresh();
         
 
         if (key != -1) {
@@ -78,7 +79,15 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
             drawCameraMiniMap(camera, cameras);
             
             
+        }
+        
+        if (camera == 3) {
+            drawBar(68, 10, 22, 2, 110, 0, *radio, 0x87d7d7, 0xFFFFFF);
+            
+        }
 
+        if (glitchTimer >= 3) {
+            glitchTimer = 0;
             refresh();
         }
 
@@ -117,7 +126,7 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
 
 
             case '\t':
-                if(*radio < 100 && camera == 3)
+                if(*radio < 110 && camera == 3)
                     (*radio)++;
                 break;
 

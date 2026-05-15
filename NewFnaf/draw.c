@@ -119,10 +119,10 @@ void drawBar(int x_0, int y_0, int width, int height, int max , int min , int no
         for (int x=0; x< width; x++) 
         {
             if (x <= bar) {
-                drawPixelHEX(y + y_0, x_0 + x, color_in);
+                drawHalfPixelHEX(y + y_0, x_0 + x, color_in);
             }
             else {
-                drawPixelHEX(y + y_0, x_0 + x, color_out);
+                drawHalfPixelHEX(y + y_0, x_0 + x, color_out);
             }
             
         }
