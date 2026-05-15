@@ -16,8 +16,6 @@ void drawArt(int y_offcet, int x_offcet, int width, int height, int colorpair, i
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++)
         {
-
-
             int value = art[y * width + x];
 
             if (value == 1) {
@@ -37,6 +35,12 @@ void drawPixel(int y, int x, int colorpair) {
     attroff(colorpair);
 }
 
+void drawHalfPixel(int y, int x, int colorpair) {
+    attron(colorpair);
+    mvaddch(y, x, ACS_BLOCK);
+    attroff(colorpair);
+}
+
 void drawPixelHEX(int y, int x, int hex) {
 
     if (hex != -1) {
@@ -47,6 +51,19 @@ void drawPixelHEX(int y, int x, int hex) {
         int colorPair = (color - 16) + 20;
 
         drawPixel(y, x, COLOR_PAIR(colorPair));
+    }
+}
+
+void drawHalfPixelHEX(int y, int x, int hex) {
+
+    if (hex != -1) {
+        int r, g, b;
+        HexToRGB(hex, &r, &g, &b);
+        int color = getColor(r, g, b);
+
+        int colorPair = (color - 16) + 20;
+
+        drawHalfPixel(y, x, COLOR_PAIR(colorPair));
     }
 }
 
