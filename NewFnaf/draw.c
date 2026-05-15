@@ -93,3 +93,24 @@ void drawImage(int xOffcet, int yOffcet, int width, int height, int *image) {
     }
 }
 
+//this function is uesed to draw our battery bar    
+void drawBar(int x_0, int y_0, int width, int height, int max , int min , int now ,int color_in , int color_out) {
+   
+    int box = (max - min) / width;
+    int bar = now / box;
+    for (int y = 0; y < height; y++) {
+        for (int x=0; x< width; x++) 
+        {
+            if (x <= bar) {
+                drawPixelHEX(y + y_0, x_0 + x, color_in);
+            }
+            else {
+                drawPixelHEX(y + y_0, x_0 + x, color_out);
+            }
+            
+        }
+        
+    }
+    
+    
+}

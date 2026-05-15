@@ -16,6 +16,8 @@ void showGame() {
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
     init_pair(6, getColor(255, 215, 0), getColor(29, 29, 29));
     init_pair(7, getColor(255, 255, 255), getColor(19, 19, 19));
+    init_pair(8, COLOR_YELLOW, COLOR_BLACK);
+
 
     bool mask = false;
     bool light = false;
@@ -26,10 +28,12 @@ void showGame() {
 
     int battery = 100;
     int batteryTimer = 0;
+    int batteryTimer1 = 0;
     int key = 0;
 
     int radio = 100;
     int radioTimer = 0;
+    
 
 
     Scene scene = MAIN_GAME;
@@ -56,6 +60,7 @@ void showGame() {
             }
         }
 
+        
         // START
 
         if (scene == MAIN_GAME) {
@@ -88,14 +93,12 @@ void showGame() {
                 if (battery > 0 && light) {
                     drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
                 }
+                
 
-                drawPixelHEX(25, 7, 0xffd700);
-                drawPixelHEX(25, 8, 0xffd700);
-                drawPixelHEX(25, 9, 0xffd700);
-                drawPixelHEX(25, 10, 0xffd700);
-                drawPixelHEX(25, 11, 0xffd700);
-                drawPixelHEX(25, 12, 0xffd700);
-                drawPixelHEX(25, 13, 0xffd700);
+                
+                
+                drawBar(7, 25, 6, 1,100,0,battery,0xffff00,0x000000);
+                
 
                 mvprintw(0, 0, "%d", key);
 
