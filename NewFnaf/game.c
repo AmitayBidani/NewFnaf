@@ -27,10 +27,12 @@ void showGame() {
 
     int battery = 100;
     int batteryTimer = 0;
+    int batteryTimer1 = 0;
     int key = 0;
 
     int radio = 100;
     int radioTimer = 0;
+    
 
 
     Scene scene = MAIN_GAME;
@@ -57,6 +59,7 @@ void showGame() {
             }
         }
 
+        
         // START
 
         if (scene == MAIN_GAME) {
@@ -89,14 +92,12 @@ void showGame() {
                 if (battery > 0 && light) {
                     drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
                 }
+                
 
-                drawPixelHEX(25, 7, 0xffd700);
-                drawPixelHEX(25, 8, 0xffd700);
-                drawPixelHEX(25, 9, 0xffd700);
-                drawPixelHEX(25, 10, 0xffd700);
-                drawPixelHEX(25, 11, 0xffd700);
-                drawPixelHEX(25, 12, 0xffd700);
-                drawPixelHEX(25, 13, 0xffd700);
+                
+                
+                drawBar(7, 25, 6, 1,100,0,battery,0xffff00,0x000000);
+                
 
                 mvprintw(0, 0, "%d", key);
 
