@@ -30,13 +30,10 @@ void showGame() {
     int batteryTimer1 = 0;
     int key = 0;
 
-    int radio = 100;
+    int radio = 110;
     int radioTimer = 0;
     
-
-
     Scene scene = MAIN_GAME;
-    
 
     while (1) {
 
@@ -77,12 +74,9 @@ void showGame() {
                 mvprintw(27, 5, "C - Open camera   L - Use Flashlight   M - Toggle Mask ");
                 mvprintw(28, 5, "Q - Quit");
 
-                attroff(COLOR_PAIR(5));
-                mvprintw(29, 5, "%d", radio);
-
 
                 attron(COLOR_PAIR(6));
-                mvprintw(25, 30, "%d", battery);
+                mvprintw(25, 25, "%d", battery);
                 attroff(COLOR_PAIR(6));
 
                 if (mask) {
@@ -93,10 +87,7 @@ void showGame() {
                     drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
                 }
                 
-
-                
-                
-                drawBar(7, 25, 6, 1,100,0,battery,0xffff00,0x000000);
+                drawBar(14, 25, 10, 1,110,0,battery,0xffd700,0x000000);
                 
 
                 mvprintw(0, 0, "%d", key);
