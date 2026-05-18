@@ -32,7 +32,7 @@ struct Camera {
 } typedef Camera;
 
 
-void cameraWindow(int* radio, int* radioTimer, int FPS);
+void cameraWindow(int* radio, int* radioTimer, long *time, int FPS);
 
 void drawCameraMiniMap(int camera, Camera* cameras);
 

@@ -27,7 +27,6 @@ void showGame() {
 
     int battery = 100;
     int batteryTimer = 0;
-    int batteryTimer1 = 0;
     int key = 0;
 
     int radio = 110;
@@ -89,6 +88,13 @@ void showGame() {
                 
                 drawBar(14, 25, 10, 1,110,0,battery,0xffd700,0x000000);
                 
+                //Draw Mainhall Character
+                drawImage(28, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character);
+                //Draw Left Vent Character
+                drawImage(5, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character);
+                //Draw Right Vent Character
+                drawImage(50, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character);
+
 
                 mvprintw(0, 0, "%d", key);
 
@@ -97,7 +103,14 @@ void showGame() {
         }
         else if (scene == CAMERA) {
             scene = MAIN_GAME;
-            cameraWindow(&radio, &radioTimer, FPS);
+            long time = 0;
+
+            cameraWindow(&radio, &radioTimer, &time, FPS);
+
+            //after we closed the camera window - left the camera loop
+            battery -= (int)(time / (4 * FPS));
+            batteryTimer = time % (4 * FPS);
+                
             resetScreen = true;
             
         }
