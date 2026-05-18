@@ -7,11 +7,13 @@
 #include "images.h"
 #include "cameras.h"
 
-void cameraWindow(int *radio, int *radioTimer, int FPS) {
+void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, Monster* monsters) {
 
     int key = 0;
     int camera = 0;
     int glitchTimer = 0;
+
+    bool resetScreen = true;
 
     Pixel glitchedPixels[GLITCH_PIXELS] = {0};
 
@@ -24,6 +26,10 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
 
 	while (1) {
 
+        monstersTick(monsters, &resetScreen);
+
+        (*time)++;
+
         (*radioTimer)++;
         if (*radioTimer >= FPS) {
             *radioTimer = 0;
@@ -33,10 +39,6 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
         }
 
         //ADD GLITCH EFFECT
-
-        
-        
-
         glitchTimer++;
         for (int i = 0; i < GLITCH_PIXELS; i++)
         {
@@ -56,10 +58,10 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
         }
         
 
-        if (key != -1) {
+        if (resetScreen) {
             erase();
 
-            drawImage(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, cameras[camera].image);
+            drawImage(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, cameras[camera].image ,1);
             attron(COLOR_PAIR(5));
             mvprintw(21, 10, "Camera: %d, %s", camera + 1, cameras[camera].name);
             attroff(COLOR_PAIR(5));
@@ -67,6 +69,8 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
             mvprintw(25, 2, "%d", *radio);
 
             attron(COLOR_PAIR(7));
+
+            
 
             if (camera == 3)
                 mvprintw(27, 12, "     TAB - Reset clock");
@@ -80,11 +84,30 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
             
             
         }
-        
-        if (camera == 3) {
+
+        switch (camera) {
+        case 0:
+            if(monsters[0].stage == 0)
+                drawImage(50, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character, 1);
+            break;
+        case 1:
+            if(monsters[1].stage == 1)
+                drawImage(25, 6, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character, 1);
+            else if (monsters[1].stage == 2)
+                drawImage(25, 10, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character, 2);
+            break;
+        case 2:
+            if (monsters[2].stage == 1)
+                drawImage(29, 5, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character, 1);
+            else if (monsters[2].stage == 2)
+                drawImage(29, 10, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character, 2);
+            break;
+        case 3:
             drawBar(68, 10, 22, 2, 110, 0, *radio, 0x87d7d7, 0xFFFFFF);
-            
+            break;
         }
+
+        
 
         if (glitchTimer >= 3) {
             glitchTimer = 0;
@@ -101,7 +124,7 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
 
 
         if (key != ERR) {
-
+            resetScreen = true;
             switch (key) {
             case 'C':
             case 'c':
@@ -138,7 +161,6 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
 
 void drawCameraMiniMap(int camera, Camera *cameras) {
 
-
     for (int c = 0; c < CAMERAS; c++)
     {
         for (int i = 0; i < cameras[c].width; i++) {
@@ -154,7 +176,6 @@ void drawCameraMiniMap(int camera, Camera *cameras) {
 
     for (int i = 0; i < 6; i++) {
         for (int j = 0; j < 2; j++) {
-
             drawHalfPixelHEX(27+ j, 40 + 50 + i, 0x6dcafc);
         }
     }
@@ -171,6 +192,37 @@ void drawCameraMiniMap(int camera, Camera *cameras) {
     
     attroff(COLOR_PAIR(8));
 
+}
+
+void monstersTick(Monster* monsters, bool* resetScreen) {
+    int staged = -1;
+
+    for (int i = 0; i < MONSTERS; i++)
+    {
+
+        if (monsters[i].currentTime == 0) {
+            int avgTime = monsters[i].avgTime;
+
+            if (monsters[i].stage == 0)
+                monsters[i].currentTime = avgTime + random((int)(avgTime / 4), (int)(avgTime / 2));
+            else
+                monsters[i].currentTime = avgTime - random(0, (int)(avgTime / 2));
+            
+            monsters[i].stage++;
+            if (staged == -1) 
+                staged = i;
+
+            resetScreen = true;
+        }
+        else
+            monsters[i].currentTime--;
+
+        if (staged != i && staged != -1) {
+            int avgTime = monsters[i].avgTime;
+            monsters[i].currentTime += random((int)(avgTime / 4), (int)(avgTime / 2));
+        }
+
+    }
 }
 
 int random(int min, int max) {

@@ -31,7 +31,7 @@ void showMainMenu() {
 
         if (key != -1) {
             erase();
-            drawImage(0, 0, MENU_WIDTH, MENU_HEIGHT, menu_pixels);
+            drawImage(0, 0, MENU_WIDTH, MENU_HEIGHT, menu_pixels, 1);
 
 
             for (int i = 0; i < 4; i++)
@@ -69,8 +69,6 @@ void showMainMenu() {
                 break;
             }
         }
-        
-
     }
 
     click(selected);
