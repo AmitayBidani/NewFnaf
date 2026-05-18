@@ -34,7 +34,14 @@ void showGame() {
     
     Scene scene = MAIN_GAME;
 
+    Monster monsters[3] = {
+        {PLAYGROUND , -1, blue_character, 12*FPS, 0}, // camera 0 enemy
+        {VENT, -1, orange_character, 15*FPS, 0}, // camera 1 enemy ( left vent )
+        {VENT, -1, purple_character, 13*FPS, 0} // camera 2 enemy ( right vent )
+    };
+
     while (1) {
+        monstersTick(monsters, &resetScreen);
 
         radioTimer++;
         if (radioTimer >= FPS) {
@@ -47,8 +54,10 @@ void showGame() {
         if (light) {
             batteryTimer++;
             if (batteryTimer >= FPS*2) {
+
                 battery--;
                 batteryTimer = 0;
+
                 resetScreen = true;
                 if (battery <= 0)
                     light = false;
@@ -58,12 +67,29 @@ void showGame() {
         
         // START
 
+
         if (scene == MAIN_GAME) {
+
+
+            if (monsters[0].stage == 2) {
+                //Draw Mainhall Character
+                drawImage(28, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character, 1);
+            }
+            if (monsters[1].stage == 2) {
+                //Draw Left Vent Character
+                drawImage(5, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character, 1);
+            }
+            if (monsters[2].stage == 2) {
+                //Draw Right Vent Character
+                drawImage(50, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character, 1);
+            }
+
+
             if (resetScreen) {
                 if (resetScreen) resetScreen = false;
 
                 erase();
-                drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels);
+                drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels, 1);
 
                 attron(COLOR_PAIR(5));
                 mvprintw(25, 5, "Battery:");
@@ -78,23 +104,15 @@ void showGame() {
                 mvprintw(25, 25, "%d", battery);
                 attroff(COLOR_PAIR(6));
 
+                drawBar(14, 25, 10, 1,110,0,battery,0xffd700,0x000000);
+
                 if (mask) {
-                    drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels);
+                    drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels, 1);
                 }
 
                 if (battery > 0 && light) {
-                    drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels);
+                    drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels, 1);
                 }
-                
-                drawBar(14, 25, 10, 1,110,0,battery,0xffd700,0x000000);
-                
-                //Draw Mainhall Character
-                drawImage(28, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character);
-                //Draw Left Vent Character
-                drawImage(5, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character);
-                //Draw Right Vent Character
-                drawImage(50, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character);
-
 
                 mvprintw(0, 0, "%d", key);
 
@@ -105,7 +123,7 @@ void showGame() {
             scene = MAIN_GAME;
             long time = 0;
 
-            cameraWindow(&radio, &radioTimer, &time, FPS);
+            cameraWindow(&radio, &radioTimer, &time, FPS, monsters);
 
             //after we closed the camera window - left the camera loop
             battery -= (int)(time / (4 * FPS));

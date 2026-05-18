@@ -10,24 +10,6 @@ void initHexColors() {
     }
 }
 
-
-void drawArt(int y_offcet, int x_offcet, int width, int height, int colorpair, int *art) {
-
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++)
-        {
-            int value = art[y * width + x];
-
-            if (value == 1) {
-                drawPixel(y + y_offcet, x + x_offcet, COLOR_PAIR(colorpair));
-            }
-            else {
-                mvprintw(y + y_offcet, (x+ x_offcet)*2, "  ");
-            }
-        }
-    }
-}
-
 void drawPixel(int y, int x, int colorpair) {
     attron(colorpair);
     mvaddch(y, x*2, ACS_BLOCK);
@@ -101,11 +83,17 @@ int getColor(int red, int green, int blue) {
     return 16 + r * 36 + g * 6 + b;
 }
 
-void drawImage(int xOffcet, int yOffcet, int width, int height, int *image) {
+void drawImage(int xOffcet, int yOffcet, int width, int height, int* image, int size) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++)
         {
-            drawPixelHEX(y + yOffcet, x + xOffcet, image[y * width + x]);
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    drawPixelHEX(y * size + yOffcet + i, x * size + xOffcet + j, image[y * width + x]);
+                }
+            }
         }
     }
 }
@@ -124,10 +112,6 @@ void drawBar(int x_0, int y_0, int width, int height, int max , int min , int no
             else {
                 drawHalfPixelHEX(y + y_0, x_0 + x, color_out);
             }
-            
         }
-        
     }
-    
-    
 }
