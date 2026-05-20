@@ -1,11 +1,9 @@
 #pragma once
 
 #define CAMERAS 4
-#define MONSTERS 4
+#define MONSTERS 3
 
 #define GLITCH_PIXELS 10
-
-
 
 enum MonsterType {
 	NONE,
@@ -32,7 +30,9 @@ struct Camera {
 
 } typedef Camera;
 
-void monstersTick(Monster* monsters, bool* resetScreen);
+int random(int min, int max);
+
+void monstersTick(Monster* monsters, bool* resetScreen, int showTime, bool* keepRunning);
 
 void cameraWindow(int* radio, int* radioTimer, long *time, int FPS, Monster* monsters);
 

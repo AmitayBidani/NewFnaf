@@ -21,8 +21,6 @@ void showGame() {
     bool mask = false;
     bool light = false;
 
-    bool keyLocked = false;
-
     bool resetScreen = true;
 
     int battery = 100;
@@ -31,17 +29,23 @@ void showGame() {
 
     int radio = 110;
     int radioTimer = 0;
+
+
+    int lightDelay = 0;
+    int maskDelay = 0;
+
+
     
     Scene scene = MAIN_GAME;
 
     Monster monsters[3] = {
-        {PLAYGROUND , -1, blue_character, 12*FPS, 0}, // camera 0 enemy
-        {VENT, -1, orange_character, 15*FPS, 0}, // camera 1 enemy ( left vent )
-        {VENT, -1, purple_character, 13*FPS, 0} // camera 2 enemy ( right vent )
+        {PLAYGROUND , -1, blue_character, random(10,20)*FPS, 0}, // camera 0 enemy
+        {VENT, -1, orange_character, random(15,20)*FPS, 0}, // camera 1 enemy ( left vent )
+        {VENT, -1, purple_character, random(15,20)*FPS, 0} // camera 2 enemy ( right vent )
     };
 
     while (1) {
-        monstersTick(monsters, &resetScreen);
+        
 
         radioTimer++;
         if (radioTimer >= FPS) {
@@ -64,6 +68,39 @@ void showGame() {
             }
         }
 
+        if (light) {
+            lightDelay++;
+
+            if (monsters[0].stage == 2) {
+
+                monsters[0].currentTime++;
+
+                if (lightDelay >= FPS * 0.5) {
+                    monsters[0].currentTime = 0;
+                    monsters[0].stage = -1;
+                }
+                
+            }
+        }
+        if (mask) {
+
+            maskDelay++;
+
+            for (int i = 1; i < 3; i++)
+            {
+                if (monsters[i].stage == 2) {
+
+                    monsters[i].currentTime++;
+
+                    if (maskDelay >= FPS * 0.5) {
+                        monsters[i].currentTime = 0;
+                        monsters[i].stage = -1;
+                    }
+                }
+                
+            }
+        }
+
         
         // START
 
@@ -71,25 +108,30 @@ void showGame() {
         if (scene == MAIN_GAME) {
 
 
-            if (monsters[0].stage == 2) {
-                //Draw Mainhall Character
-                drawImage(28, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character, 1);
-            }
-            if (monsters[1].stage == 2) {
-                //Draw Left Vent Character
-                drawImage(5, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character, 1);
-            }
-            if (monsters[2].stage == 2) {
-                //Draw Right Vent Character
-                drawImage(50, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character, 1);
-            }
+            
 
 
             if (resetScreen) {
-                if (resetScreen) resetScreen = false;
+                resetScreen = false;
 
                 erase();
+
+
                 drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels, 1);
+
+
+                if (monsters[0].stage == 2) {
+                    //Draw Mainhall Character
+                    drawImage(28, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character, 1);
+                }
+                if (monsters[1].stage == 2) {
+                    //Draw Left Vent Character
+                    drawImage(5, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character, 1);
+                }
+                if (monsters[2].stage == 2) {
+                    //Draw Right Vent Character
+                    drawImage(50, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character, 1);
+                }
 
                 attron(COLOR_PAIR(5));
                 mvprintw(25, 5, "Battery:");
@@ -110,11 +152,16 @@ void showGame() {
                     drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels, 1);
                 }
 
-                if (battery > 0 && light) {
+                if (light) {
                     drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels, 1);
                 }
 
                 mvprintw(0, 0, "%d", key);
+
+
+                mvprintw(0, 0, "HALLWAY: %d | %d || %d", monsters[0].stage, monsters[0].currentTime, monsters[0].avgTime);
+                mvprintw(1, 0, "LEFT: %d | %d || %d", monsters[1].stage, monsters[1].currentTime, monsters[1].avgTime);
+                mvprintw(2, 0, "RIGHT: %d | %d || %d", monsters[2].stage, monsters[2].currentTime, monsters[2].avgTime);
 
                 refresh();
             }
@@ -132,6 +179,12 @@ void showGame() {
             resetScreen = true;
             
         }
+
+        bool keepRunning = true;
+        monstersTick(monsters, &resetScreen, FPS * 5, &keepRunning);
+        if (!keepRunning)
+            return;
+
 
         // END
 
@@ -156,21 +209,26 @@ void showGame() {
             case 'M':
             case 'm':
                 mask = !mask;
+                lightDelay = 0;
+                maskDelay = 0;
                 light = false;
                 break;
             case 'L':
             case 'l':
                 light = !light;
+                lightDelay = 0;
+                maskDelay = 0;
                 mask = false;
                 break;
             case 'C':
             case 'c':
                 mask = false;
                 light = false;
+                lightDelay = 0;
+                maskDelay = 0;
                 scene = CAMERA;
                 break;
             }
-
         }
         
         napms(1000 / FPS);
