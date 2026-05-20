@@ -1,12 +1,16 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 
 #include <curses.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "draw.h"
 #include "mainmenu.h"
 
-
 int main() {
+
+    srand(time(NULL));
+
     initscr();
     noecho();
     cbreak();
