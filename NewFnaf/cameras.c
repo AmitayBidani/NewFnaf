@@ -43,6 +43,9 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, Monster* mon
                 (*radio)--;
         }
 
+        if (radio <= 0)
+            return;
+
         //ADD GLITCH EFFECT
         glitchTimer++;
         for (int i = 0; i < GLITCH_PIXELS; i++)
@@ -94,22 +97,21 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, Monster* mon
             
         }
 
+        //Draw the enemies in the right place
+
+        for (int i = 1; i < 3; i++)
+        {
+            if (camera == i) {
+                if (monsters[i].stage == 1)
+                    drawImage(25 + 4*(i-1), 6- (i-1), VENTCHAR_WIDTH, VENTCHAR_HEIGHT, monsters[i].image, 1);
+                else if (monsters[i].stage == 2)
+                    drawImage(25 + 4*(i-1), 10, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, monsters[i].image, 2);
+            }
+        }
         switch (camera) {
         case 0:
-            if(monsters[0].stage == 0)
+            if (monsters[0].stage == 0)
                 drawImage(50, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character, 1);
-            break;
-        case 1:
-            if(monsters[1].stage == 1)
-                drawImage(25, 6, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character, 1);
-            else if (monsters[1].stage == 2)
-                drawImage(25, 10, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character, 2);
-            break;
-        case 2:
-            if (monsters[2].stage == 1)
-                drawImage(29, 5, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character, 1);
-            else if (monsters[2].stage == 2)
-                drawImage(29, 10, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character, 2);
             break;
         case 3:
             drawBar(68, 10, 22, 2, 110, 0, *radio, 0x87d7d7, 0xFFFFFF);
@@ -238,14 +240,13 @@ void monstersTick(Monster* monsters, bool* resetScreen, int showTime, bool* keep
         else
             monsters[i].currentTime--;
 
-
     }
 
     //If someone moved a to a new stage, we are delaying the others.
     if (staged != -1) {
         for (int i = 0; i < MONSTERS; i++)
         {
-            if (staged != i && staged != -1) {
+            if (staged != i && staged != -1 && monsters[i].stage < 2) {
 
                 int avgTime = monsters[i].avgTime;
                 monsters[i].currentTime += (int)(avgTime / 3) + random((int)(avgTime*0.35), (int)(avgTime*0.65));

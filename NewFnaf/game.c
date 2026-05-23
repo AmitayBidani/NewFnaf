@@ -1,17 +1,31 @@
 #include <curses.h>
 #include <stdbool.h>
-
+#include <windows.h>
 
 #include "draw.h"
 #include "images.h"
+
+#include "saver.h"
 
 #include "cameras.h"
 #include "game.h"
 
 static int FPS = 30;
 
-void showGame() {
+static Data d;
+
+BOOL WINAPI consoleHandler(DWORD ctrlType) {
+    saveData(d);
+    return TRUE;
+}
+
+void showGame(Data data) {
     nodelay(stdscr, TRUE);
+    SetConsoleCtrlHandler(consoleHandler, true);
+
+    d = data;
+
+    atexit(exit);
 
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
     init_pair(6, getColor(255, 215, 0), getColor(29, 29, 29));
@@ -23,29 +37,41 @@ void showGame() {
 
     bool resetScreen = true;
 
-    int battery = 100;
+    int *battery = &d.battery;
     int batteryTimer = 0;
     int key = 0;
 
     int radio = 110;
     int radioTimer = 0;
 
-
     int lightDelay = 0;
     int maskDelay = 0;
-
-
     
     Scene scene = MAIN_GAME;
 
+    int *currentTime = &d.hour;
+    int *currentDay = &d.day;
+    Day days[5];
+    
+    for (int i = 0; i < 5; i++)
+    {
+        int value[3];
+        for (int i = 0; i < 3; i++)
+        {
+            value[i] = random(42 - (i * 9), 47 - (i * 9)) * FPS;
+        }
+
+        days[i] = (Day){value[0], value[1], value[2], FPS * 2 - (i * 4)};
+    }
+    
+
     Monster monsters[3] = {
-        {PLAYGROUND , -1, blue_character, random(10,20)*FPS, 0}, // camera 0 enemy
-        {VENT, -1, orange_character, random(15,20)*FPS, 0}, // camera 1 enemy ( left vent )
-        {VENT, -1, purple_character, random(15,20)*FPS, 0} // camera 2 enemy ( right vent )
+        {-1, blue_character, days[*currentDay].blueDelay, 0}, // camera 0 enemy
+        {-1, orange_character, days[*currentDay].orangeDelay, 0}, // camera 1 enemy ( left vent )
+        {-1, purple_character, days[*currentDay].purpleDelay, 0} // camera 2 enemy ( right vent )
     };
 
     while (1) {
-        
 
         radioTimer++;
         if (radioTimer >= FPS) {
@@ -57,13 +83,13 @@ void showGame() {
 
         if (light) {
             batteryTimer++;
-            if (batteryTimer >= FPS*2) {
+            if (batteryTimer >= days[*currentDay].batterySpeed) {
 
-                battery--;
+                (*battery)--;
                 batteryTimer = 0;
 
                 resetScreen = true;
-                if (battery <= 0)
+                if (*battery <= 0)
                     light = false;
             }
         }
@@ -107,10 +133,6 @@ void showGame() {
 
         if (scene == MAIN_GAME) {
 
-
-            
-
-
             if (resetScreen) {
                 resetScreen = false;
 
@@ -119,18 +141,15 @@ void showGame() {
 
                 drawImage(0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, background_pixels, 1);
 
-
+                //Draw Mainhall Character
                 if (monsters[0].stage == 2) {
-                    //Draw Mainhall Character
                     drawImage(28, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character, 1);
                 }
-                if (monsters[1].stage == 2) {
-                    //Draw Left Vent Character
-                    drawImage(5, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, orange_character, 1);
-                }
-                if (monsters[2].stage == 2) {
-                    //Draw Right Vent Character
-                    drawImage(50, 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, purple_character, 1);
+
+                //Draw Left & Right Vent Characters
+                for (int i = 1; i < 3; i++) {
+                    if (monsters[i].stage == 2)
+                        drawImage(5 + 45*(i-1), 14, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, monsters[i].image, 1);
                 }
 
                 attron(COLOR_PAIR(5));
@@ -143,25 +162,24 @@ void showGame() {
 
 
                 attron(COLOR_PAIR(6));
-                mvprintw(25, 25, "%d", battery);
+                mvprintw(25, 25, "%d", *battery);
                 attroff(COLOR_PAIR(6));
 
-                drawBar(14, 25, 10, 1,110,0,battery,0xffd700,0x000000);
+                drawBar(14, 25, 10, 1,110,0,*battery,0xffd700,0x000000);
 
-                if (mask) {
+                if (mask)
                     drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels, 1);
-                }
 
-                if (light) {
+                if (light)
                     drawImage(25, 8, LIGHT_WIDTH, LIGHT_HEIGHT, light_pixels, 1);
-                }
 
+
+                //DEV
                 mvprintw(0, 0, "%d", key);
-
-
                 mvprintw(0, 0, "HALLWAY: %d | %d || %d", monsters[0].stage, monsters[0].currentTime, monsters[0].avgTime);
                 mvprintw(1, 0, "LEFT: %d | %d || %d", monsters[1].stage, monsters[1].currentTime, monsters[1].avgTime);
                 mvprintw(2, 0, "RIGHT: %d | %d || %d", monsters[2].stage, monsters[2].currentTime, monsters[2].avgTime);
+                //
 
                 refresh();
             }
@@ -173,7 +191,7 @@ void showGame() {
             cameraWindow(&radio, &radioTimer, &time, FPS, monsters);
 
             //after we closed the camera window - left the camera loop
-            battery -= (int)(time / (4 * FPS));
+            (*battery) -= (int)(time / (4 * FPS));
             batteryTimer = time % (4 * FPS);
                 
             resetScreen = true;
@@ -182,7 +200,9 @@ void showGame() {
 
         bool keepRunning = true;
         monstersTick(monsters, &resetScreen, FPS * 5, &keepRunning);
-        if (!keepRunning)
+
+        //END GAME - LOSE
+        if (!keepRunning || radio <= 0)
             return;
 
 
@@ -204,6 +224,7 @@ void showGame() {
             switch (key) {
             case 'Q':
             case 'q':
+                saveData(d);
                 return;
                 break;
             case 'M':
@@ -229,6 +250,7 @@ void showGame() {
                 scene = CAMERA;
                 break;
             }
+            
         }
         
         napms(1000 / FPS);

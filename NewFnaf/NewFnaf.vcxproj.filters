@@ -33,6 +33,9 @@
     <ClCompile Include="images.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="saver.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="draw.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cameras.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
