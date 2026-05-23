@@ -5,14 +5,8 @@
 
 #define GLITCH_PIXELS 10
 
-enum MonsterType {
-	NONE,
-	VENT,
-	PLAYGROUND,
-} typedef MonsterType;
 
 struct Monster {
-	MonsterType type;
 	int stage;
 	int* image;
 	int avgTime; // The average time it takes to the monster to go to the next stage

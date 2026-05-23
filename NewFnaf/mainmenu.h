@@ -1,4 +1,6 @@
 #pragma once
 
-void click(int selected);
+#include "saver.h"
+
+void click(char* selected, Data data);
 void showMainMenu();

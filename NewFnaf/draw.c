@@ -87,11 +87,14 @@ void drawImage(int xOffcet, int yOffcet, int width, int height, int* image, int 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++)
         {
+            int hex = image[y * width + x];
+
+
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
-                    drawPixelHEX(y * size + yOffcet + i, x * size + xOffcet + j, image[y * width + x]);
+                    drawPixelHEX(y * size + yOffcet + i, x * size + xOffcet + j, hex);
                 }
             }
         }
