@@ -8,7 +8,7 @@
 #include "cameras.h"
 #include <time.h>
 
-void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, Monster* monsters) {
+void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Monster* monsters) {
 
 
     int key = 0;
@@ -29,14 +29,14 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, Monster* mon
 	while (1) {
 
         bool keepRunning = true;
-        monstersTick(monsters, &resetScreen, FPS * 2, &keepRunning);
+        monstersTick(monsters, &resetScreen, FPS * 4.5 - day*15, &keepRunning);
         if (!keepRunning)
             return;
 
         (*time)++;
 
         (*radioTimer)++;
-        if (*radioTimer >= FPS) {
+        if (*radioTimer >= 22 - (day * 3)) {
             *radioTimer = 0;
 
             if(*radio > 0)
@@ -77,7 +77,7 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, Monster* mon
             mvprintw(21, 10, "Camera: %d, %s", camera + 1, cameras[camera].name);
             attroff(COLOR_PAIR(5));
 
-            mvprintw(25, 2, "%d", *radio);
+            //mvprintw(25, 2, "%d", *radio);
 
             attron(COLOR_PAIR(7));
 
@@ -91,9 +91,9 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, Monster* mon
 
             drawCameraMiniMap(camera, cameras);
             
-            mvprintw(0, 0, "HALLWAY: %d | %d || %d", monsters[0].stage, monsters[0].currentTime, monsters[0].avgTime);
-            mvprintw(1, 0, "LEFT: %d | %d || %d", monsters[1].stage, monsters[1].currentTime, monsters[1].avgTime);
-            mvprintw(2, 0, "RIGHT: %d | %d || %d", monsters[2].stage, monsters[2].currentTime, monsters[2].avgTime);
+            //mvprintw(0, 0, "HALLWAY: %d | %d || %d", monsters[0].stage, monsters[0].currentTime, monsters[0].avgTime);
+            //mvprintw(1, 0, "LEFT: %d | %d || %d", monsters[1].stage, monsters[1].currentTime, monsters[1].avgTime);
+            //mvprintw(2, 0, "RIGHT: %d | %d || %d", monsters[2].stage, monsters[2].currentTime, monsters[2].avgTime);
             
         }
 

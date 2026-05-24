@@ -4,6 +4,7 @@ struct Data {
 	int day;
 	int hour;
 	int battery;
+	int radio;
 	int wins;
 } typedef Data;
 
