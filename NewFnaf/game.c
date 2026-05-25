@@ -31,8 +31,8 @@ void showGame(Data data) {
 
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
     init_pair(6, getColor(255, 215, 0), getColor(29, 29, 29));
-    init_pair(7, getColor(255, 255, 255), getColor(19, 19, 19));
-    init_pair(8, getColor(200, 200, 200), getColor(19, 19, 19));
+    init_pair(7, getColor(255, 255, 255), getColor(8, 8, 8));
+    init_pair(8, getColor(200, 200, 200), getColor(8, 8, 8));
 
     bool mask = false;
     bool light = false;
@@ -55,6 +55,7 @@ void showGame(Data data) {
     int *currentTime = &d.hour;
     int *currentDay = &d.day;
     Day days[5];
+
     
     for (int i = 0; i < 5; i++)
     {
@@ -84,23 +85,48 @@ void showGame(Data data) {
         }
         if (*currentTime >= 6) {
             *currentTime = 0;
-            (*currentDay)++;
+            *radio = 110;
+            *battery = 100;
             clear();
             mvprintw(14, 58, "6 AM");
             refresh();
-            napms(2000);
-            clear();
-            mvprintw(14, 57, "DAY: %d", *currentDay);
-            refresh();
-            napms(1500);
-            mvprintw(14, 57, "DAY: %d", *currentDay + 1);
-            refresh();
-            napms(3000);
+
+            //WIN
+            if(*currentDay >= 4) {
+                *currentDay = 0;
+                clear();
+                drawImage(21, 4, TEXT_WIDTH, TEXT_HEIGHT, you_pixel, 1);
+                drawImage(21, 11, TEXT_WIDTH, TEXT_HEIGHT, won_pixel, 1);
+                mvprintw(20, 54, "PRESS Q TO LEAVE");
+                d = (Data){ 0, 0, 100, 110, 0 };
+                saveData(d);
+                refresh();
+                char k;
+                while (1) {
+                    k = getch();
+                    if (k == 'Q' || k == 'q') {
+                        
+                        nodelay(stdscr, FALSE);
+                        return;
+                    }  
+                }
+            }
+            else {
+                (*currentDay)++;
+                napms(2000);
+                clear();
+                mvprintw(14, 57, "DAY: %d", *currentDay);
+                refresh();
+                napms(800);
+                mvprintw(14, 57, "DAY: %d", *currentDay + 1);
+                refresh();
+                napms(3000);
+            }
         }
 
 
         radioTimer++;
-        if (radioTimer >= 22 - (*currentDay * 3)) {
+        if (radioTimer >= 18 - (*currentDay * 3)) {
             radioTimer = 0;
             if(*radio > 0)
                 (*radio)--;
@@ -220,12 +246,13 @@ void showGame(Data data) {
             scene = MAIN_GAME;
             long time = 0;
 
-            cameraWindow(radio, &radioTimer, &time, FPS, *currentDay, monsters);
+            cameraWindow(radio, &radioTimer, &time, FPS, *currentDay, monsters, &(*currentTime), &hourDelay);
 
             //after we closed the camera window - left the camera loop
             int batterySpeed = days[*currentDay].batterySpeed+FPS;
 
             (*battery) -= (int)((time+batteryTimer) / (batterySpeed));
+            if (*battery < 0) battery = 0;
             batteryTimer = (time + batteryTimer) % (batterySpeed);
                 
             resetScreen = true;
@@ -237,17 +264,34 @@ void showGame(Data data) {
 
         //END GAME - LOSE
         if (!keepRunning || *radio <= 0) {
-            saveData((Data) {*currentDay, 0, 100,110, 0});
+            
             clear();
-            mvprintw(14, 57, "YOU LOST!", *currentDay);
+            drawImage(20, 4, TEXT_WIDTH, TEXT_HEIGHT, you_pixel, 1);
+            drawImage(20, 11, TEXT_WIDTH, TEXT_HEIGHT, lost_pixel, 1);
+            d = (Data){ *currentDay, 0, 100, 110, 0 };
+            saveData(d);
+
             if (*currentTime == 0)
-                mvprintw(13, 51, "DAY: %d | Time: 12 AM", *currentDay);
+                mvprintw(29, 51, "DAY: %d | Time: 12 AM", *currentDay + 1);
             else
-                mvprintw(13, 51, "DAY: %d | Time: %d AM", *currentDay, *currentTime);
+                mvprintw(29, 51, "DAY: %d | Time: %d AM", *currentDay + 1, *currentTime);
+
+            if(!keepRunning)
+                mvprintw(19, 53, "A Monster Ate You!");
+            else
+                mvprintw(19, 41, "The Timer in The Livingroom Has Runned out!");
+
+            mvprintw(20, 54, "PRESS Q TO LEAVE");
             refresh();
-            napms(5000);
-            nodelay(stdscr, FALSE);
-            return;
+            char k;
+            while (1) {
+                k = getch();
+                if (k == 'Q' || k == 'q') {
+                    nodelay(stdscr, FALSE);
+                    return;
+                }
+
+            }
         }
             
 

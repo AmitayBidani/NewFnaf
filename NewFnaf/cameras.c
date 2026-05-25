@@ -6,9 +6,10 @@
 #include "draw.h"
 #include "images.h"
 #include "cameras.h"
+#include "game.h"
 #include <time.h>
 
-void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Monster* monsters) {
+void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Monster* monsters, int *currentTime, int *hourDelay) {
 
 
     int key = 0;
@@ -42,6 +43,14 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Mon
             if(*radio > 0)
                 (*radio)--;
         }
+        (*hourDelay)++;
+        if (*hourDelay >= FPS * HOURTIME) {
+            (*currentTime)++;
+            *hourDelay = 0;
+        }
+        if (*currentTime >= 6)
+            return;
+
 
         if (radio <= 0)
             return;

@@ -17,9 +17,9 @@ void showMainMenu() {
     Data data;
     loadData(&data);
 
-    init_pair(1, getColor(255, 255, 255), getColor(215, 0, 0));
-    init_pair(2, getColor(255,255,255), getColor(175, 0, 0));
-    init_pair(3, getColor(255, 255, 255), getColor(18, 18, 18));
+    init_pair(1, getColor(255, 255, 255), getColor(8, 8, 8));
+    init_pair(2, getColor(255,255,255), getColor(40,40,40));
+    init_pair(3, getColor(255, 255, 255), getColor(8,8,8));
 
     int selected = 0;
     int key = 0;
@@ -64,7 +64,7 @@ void showMainMenu() {
             
             if (optionSize == 5) {
                 attron(COLOR_PAIR(1));
-                mvprintw(15, 38, "(Day: %d)", data.day+1);
+                mvprintw(15, 20, "(Day: %d)", data.day+1);
                 attroff(COLOR_PAIR(1));
             }
             
@@ -73,12 +73,12 @@ void showMainMenu() {
             {
                 if (i == selected) {
                     attron(COLOR_PAIR(2));
-                    mvprintw(15 + i, 26, options[i]);
+                    mvprintw(15 + i, 8, options[i]);
                     attroff(COLOR_PAIR(2));
                 }
                 else {
                     attron(COLOR_PAIR(1));
-                    mvprintw(15 + i, 26, options[i]);
+                    mvprintw(15 + i, 8, options[i]);
                     attroff(COLOR_PAIR(1));
                 }
             }

@@ -14,6 +14,7 @@ struct Day {
 } typedef Day;
 
 
+
 enum Scene{
 	MAIN_GAME,
 	CAMERA
