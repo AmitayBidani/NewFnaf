@@ -2,6 +2,8 @@
 
 #include "saver.h"
 
+#define HOURTIME 30
+
 void showGame(Data data);
 
 struct Day {
@@ -10,6 +12,7 @@ struct Day {
 	int purpleDelay;
 	int batterySpeed;
 } typedef Day;
+
 
 
 enum Scene{

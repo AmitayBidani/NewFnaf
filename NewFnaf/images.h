@@ -41,3 +41,12 @@ int orange_character[VENTCHAR_WIDTH * VENTCHAR_HEIGHT];
 #define BLUECHAR_HEIGHT 9
 
 int blue_character[BLUECHAR_WIDTH * BLUECHAR_HEIGHT];
+
+#define TEXT_WIDTH 22
+#define TEXT_HEIGHT 6
+
+int you_pixel[TEXT_WIDTH * TEXT_HEIGHT];
+
+int lost_pixel[TEXT_WIDTH * TEXT_HEIGHT];
+
+int won_pixel[TEXT_WIDTH * TEXT_HEIGHT];

@@ -17,16 +17,16 @@ void showMainMenu() {
     Data data;
     loadData(&data);
 
-    init_pair(1, getColor(255, 255, 255), getColor(215, 0, 0));
-    init_pair(2, getColor(255,255,255), getColor(175, 0, 0));
-    init_pair(3, getColor(255, 255, 255), getColor(18, 18, 18));
+    init_pair(1, getColor(255, 255, 255), getColor(8, 8, 8));
+    init_pair(2, getColor(255,255,255), getColor(40,40,40));
+    init_pair(3, getColor(255, 255, 255), getColor(8,8,8));
 
     int selected = 0;
     int key = 0;
     int optionSize = 5;
 
     char** options;
-    if (data.day == 0 && data.hour == 0 && data.battery == 100 && data.wins == 0) {
+    if (data.day == 0 && data.hour == 0 && data.battery == 100 && data.wins == 0 && data.radio == 110) {
 
         optionSize = 4;
         options = malloc(optionSize * sizeof(char[50]));
@@ -61,18 +61,24 @@ void showMainMenu() {
         if (key != -1) {
             erase();
             drawImage(0, 0, MENU_WIDTH, MENU_HEIGHT, menu_pixels, 1);
-
+            
+            if (optionSize == 5) {
+                attron(COLOR_PAIR(1));
+                mvprintw(15, 20, "(Day: %d)", data.day+1);
+                attroff(COLOR_PAIR(1));
+            }
+            
 
             for (int i = 0; i < optionSize; i++)
             {
                 if (i == selected) {
                     attron(COLOR_PAIR(2));
-                    mvprintw(15 + i, 26, options[i]);
+                    mvprintw(15 + i, 8, options[i]);
                     attroff(COLOR_PAIR(2));
                 }
                 else {
                     attron(COLOR_PAIR(1));
-                    mvprintw(15 + i, 26, options[i]);
+                    mvprintw(15 + i, 8, options[i]);
                     attroff(COLOR_PAIR(1));
                 }
             }
@@ -126,12 +132,14 @@ void click(char* selected, Data data) {
         loadScreen();
         napms(700);
         showGame(data);
+        showMainMenu();
     }
     else if (strcmp(selected, "- New Game") == 0) {
         loadScreen();
-        data = (Data){ 0,0,100,0 };
+        data = (Data){0,0,100,110,0};
         napms(700);
         showGame(data);
+        showMainMenu();
     }
     else if (strcmp(selected, "- How To Play") == 0) {
         while (1) {
