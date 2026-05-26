@@ -51,7 +51,7 @@ void showGame(Data data) {
     
     Scene scene = MAIN_GAME;
     
-    int hourDelay = 0;
+    int *timeDelay = &d.hourDelay;
     int *currentTime = &d.hour;
     int *currentDay = &d.day;
     Day days[5];
@@ -77,19 +77,26 @@ void showGame(Data data) {
 
     while (1) {
 
-        hourDelay++;
-        if (hourDelay >= FPS * HOURTIME) {
+        (*timeDelay)++;
+        if (*timeDelay >= FPS * HOURTIME) {
             (*currentTime)++;
             resetScreen = true;
-            hourDelay = 0;
+            *timeDelay = 0;
         }
         if (*currentTime >= 6) {
             *currentTime = 0;
             *radio = 110;
             *battery = 100;
+
+            //reset monsters position
+            monsters[0] = (Monster){ -1, blue_character, days[*currentDay].blueDelay, 0 }; // camera 0 enemy
+            monsters[1] = (Monster){ -1, orange_character, days[*currentDay].orangeDelay, 0 }; // camera 1 enemy ( left vent )
+            monsters[2] = (Monster){ -1, purple_character, days[*currentDay].purpleDelay, 0 }; // camera 2 enemy ( right vent )
+
             clear();
             mvprintw(14, 58, "6 AM");
             refresh();
+            napms(2000);
 
             //WIN
             if(*currentDay >= 4) {
@@ -97,15 +104,16 @@ void showGame(Data data) {
                 clear();
                 drawImage(21, 4, TEXT_WIDTH, TEXT_HEIGHT, you_pixel, 1);
                 drawImage(21, 11, TEXT_WIDTH, TEXT_HEIGHT, won_pixel, 1);
-                mvprintw(20, 54, "PRESS Q TO LEAVE");
-                d = (Data){ 0, 0, 100, 110, 0 };
+                mvprintw(23, 54, "PRESS Q TO LEAVE");
+                mvprintw(21, 54, "Total Losses: %d", data.losses);
+                mvprintw(20, 54, "Win Number: %d !", data.wins+1);
+                d = (Data){0,0,0,100,110,d.wins+1,0};
                 saveData(d);
                 refresh();
                 char k;
                 while (1) {
                     k = getch();
                     if (k == 'Q' || k == 'q') {
-                        
                         nodelay(stdscr, FALSE);
                         return;
                     }  
@@ -113,7 +121,6 @@ void showGame(Data data) {
             }
             else {
                 (*currentDay)++;
-                napms(2000);
                 clear();
                 mvprintw(14, 57, "DAY: %d", *currentDay);
                 refresh();
@@ -206,7 +213,7 @@ void showGame(Data data) {
                 }
 
                 attron(COLOR_PAIR(5));
-                mvprintw(25, 5, "Battery:");
+                
 
                 mvprintw(0, 0, "Day: %d", *currentDay +1);
                 if (*currentTime == 0)
@@ -220,10 +227,11 @@ void showGame(Data data) {
 
 
                 attron(COLOR_PAIR(6));
-                mvprintw(25, 25, "%d | %d", *battery, batteryTimer);
+                mvprintw(25, 5, "Battery:");
+                //mvprintw(25, 25, "%d | %d", *battery, batteryTimer);
                 attroff(COLOR_PAIR(6));
 
-                drawBar(14, 25, 10, 1,110,0,*battery,0xffd700,0x000000);
+                drawBar(14, 25, 10, 1,110,0,*battery,0xf5c925,0x000000);
 
                 if (mask)
                     drawImage(0, 0, MASK_WIDTH, MASK_HEIGHT, mask_pixels, 1);
@@ -246,7 +254,7 @@ void showGame(Data data) {
             scene = MAIN_GAME;
             long time = 0;
 
-            cameraWindow(radio, &radioTimer, &time, FPS, *currentDay, monsters, &(*currentTime), &hourDelay);
+            cameraWindow(radio, &radioTimer, &time, FPS, *currentDay, monsters, &(*currentTime), &(*timeDelay));
 
             //after we closed the camera window - left the camera loop
             int batterySpeed = days[*currentDay].batterySpeed+FPS;
@@ -268,18 +276,20 @@ void showGame(Data data) {
             clear();
             drawImage(20, 4, TEXT_WIDTH, TEXT_HEIGHT, you_pixel, 1);
             drawImage(20, 11, TEXT_WIDTH, TEXT_HEIGHT, lost_pixel, 1);
-            d = (Data){ *currentDay, 0, 100, 110, 0 };
-            saveData(d);
+            
 
             if (*currentTime == 0)
-                mvprintw(29, 51, "DAY: %d | Time: 12 AM", *currentDay + 1);
+                mvprintw(29, 52, "DAY: %d | Time: 12 AM", *currentDay + 1);
             else
-                mvprintw(29, 51, "DAY: %d | Time: %d AM", *currentDay + 1, *currentTime);
+                mvprintw(29, 52, "DAY: %d | Time: %d AM", *currentDay + 1, *currentTime);
 
             if(!keepRunning)
                 mvprintw(19, 53, "A Monster Ate You!");
             else
                 mvprintw(19, 41, "The Timer in The Livingroom Has Runned out!");
+
+            d = (Data){ *currentDay,0,0,100,110,d.wins,d.losses + 1 };
+            saveData(d);
 
             mvprintw(20, 54, "PRESS Q TO LEAVE");
             refresh();

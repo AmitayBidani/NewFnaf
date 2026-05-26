@@ -27,7 +27,7 @@ void loadData(Data* data) {
 		fread(data, sizeof(Data), 1, file);
 	}
 	else {
-		*data = (Data){0,0,100,110,0};
+		*data = (Data){0,0,0,100,110,0,0};
 	}
 }
 
