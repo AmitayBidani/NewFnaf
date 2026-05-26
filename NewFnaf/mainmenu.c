@@ -84,6 +84,8 @@ void showMainMenu() {
             }
             attron(COLOR_PAIR(3));
             mvprintw(29, 2, "Arrow Up - Up   Arrow Down - Down   Enter - Select");
+
+            mvprintw(29, 110, "Wins: %d", data.wins);
             attroff(COLOR_PAIR(3));
 
             refresh();
@@ -136,7 +138,7 @@ void click(char* selected, Data data) {
     }
     else if (strcmp(selected, "- New Game") == 0) {
         loadScreen();
-        data = (Data){0,0,100,110,0};
+        data = (Data){0,0,0,100,110,data.wins,0};
         napms(700);
         showGame(data);
         showMainMenu();

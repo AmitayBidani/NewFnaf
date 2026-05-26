@@ -152,10 +152,18 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Mon
                 break;
 
             case KEY_LEFT:
-                camera = (camera - 1 + CAMERAS) % CAMERAS;
+                if (camera == 0)
+                    camera = 1;
+                else
+                    camera = (camera - 1 + CAMERAS) % CAMERAS;
+                
                 break;
             case KEY_RIGHT:
-                camera = (camera + 1) % CAMERAS;
+                if (camera == 0)
+                    camera = 2;
+                else
+                    camera = (camera + 1) % CAMERAS;
+                
                 break;
             case KEY_UP:
                 if (camera == 1 || camera == 2)
@@ -164,6 +172,7 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Mon
                     camera = 3;
                 break;
             case KEY_DOWN:
+                
                 camera = (camera + 1) % CAMERAS;
                 break;
 
