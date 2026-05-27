@@ -29,3 +29,24 @@ int camera_timer[CAMERA_WIDTH * CAMERA_HEIGHT];
 int camera_playground[CAMERA_WIDTH * CAMERA_HEIGHT];
 
 int camera_vent[CAMERA_WIDTH * CAMERA_HEIGHT];
+
+#define VENTCHAR_WIDTH 5
+#define VENTCHAR_HEIGHT 5
+
+int purple_character[VENTCHAR_WIDTH * VENTCHAR_HEIGHT];
+
+int orange_character[VENTCHAR_WIDTH * VENTCHAR_HEIGHT];
+
+#define BLUECHAR_WIDTH 6
+#define BLUECHAR_HEIGHT 9
+
+int blue_character[BLUECHAR_WIDTH * BLUECHAR_HEIGHT];
+
+#define TEXT_WIDTH 22
+#define TEXT_HEIGHT 6
+
+int you_pixel[TEXT_WIDTH * TEXT_HEIGHT];
+
+int lost_pixel[TEXT_WIDTH * TEXT_HEIGHT];
+
+int won_pixel[TEXT_WIDTH * TEXT_HEIGHT];

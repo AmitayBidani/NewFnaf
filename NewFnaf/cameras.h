@@ -1,25 +1,18 @@
 #pragma once
 
 #define CAMERAS 4
+#define MONSTERS 3
 
 #define GLITCH_PIXELS 10
 
-enum Place {
-	NONE,
-	IN_VENT_LEFT,
-	IN_VENT_RIGHT,
-	VENT_LEFT,
-	VENT_RIGHT,
-	PLAYGROUND,
-	LIVINGROOM,
-	HALLWAY
-} typedef Place;
-
 
 struct Monster {
-	Place targetPlace;
-} typedef Monster;
+	int stage;
+	int* image;
+	int avgTime; // The average time it takes to the monster to go to the next stage
+	int currentTime;
 
+} typedef Monster;
 
 struct Camera {
 	char* name;
@@ -31,9 +24,14 @@ struct Camera {
 
 } typedef Camera;
 
+int random(int min, int max);
 
-void cameraWindow(int* radio, int* radioTimer, int FPS);
+void monstersTick(Monster* monsters, bool* resetScreen, int showTime, bool* keepRunning);
+
+void cameraWindow(int* radio, int* radioTimer, long* time, int FPS, int day, Monster* monsters, int *currentTime, int *hourDelay);
 
 void drawCameraMiniMap(int camera, Camera* cameras);
+
+
 
 

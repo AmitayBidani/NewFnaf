@@ -6,12 +6,17 @@
 #include "draw.h"
 #include "images.h"
 #include "cameras.h"
+#include "game.h"
+#include <time.h>
 
-void cameraWindow(int *radio, int *radioTimer, int FPS) {
+void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Monster* monsters, int *currentTime, int *hourDelay) {
+
 
     int key = 0;
     int camera = 0;
     int glitchTimer = 0;
+
+    bool resetScreen = true;
 
     Pixel glitchedPixels[GLITCH_PIXELS] = {0};
 
@@ -24,13 +29,31 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
 
 	while (1) {
 
+        bool keepRunning = true;
+        monstersTick(monsters, &resetScreen, FPS * 4.5 - day*15, &keepRunning);
+        if (!keepRunning)
+            return;
+
+        (*time)++;
+
         (*radioTimer)++;
-        if (*radioTimer >= FPS) {
+        if (*radioTimer >= 22 - (day * 3)) {
             *radioTimer = 0;
 
             if(*radio > 0)
                 (*radio)--;
         }
+        (*hourDelay)++;
+        if (*hourDelay >= FPS * HOURTIME) {
+            (*currentTime)++;
+            *hourDelay = 0;
+        }
+        if (*currentTime >= 6)
+            return;
+
+
+        if (radio <= 0)
+            return;
 
         //ADD GLITCH EFFECT
         glitchTimer++;
@@ -50,20 +73,20 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
             if(glitchTimer >= 3)
                 drawPixelHEX(glitchedPixels[i].y, glitchedPixels[i].x, 0x252525);
         }
-
-        if (glitchTimer >= 3) glitchTimer = 0;
-        refresh();
         
 
-        if (key != -1) {
+        if (resetScreen) {
+
+            resetScreen = false;
+
             erase();
 
-            drawImage(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, cameras[camera].image);
+            drawImage(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, cameras[camera].image ,1);
             attron(COLOR_PAIR(5));
             mvprintw(21, 10, "Camera: %d, %s", camera + 1, cameras[camera].name);
             attroff(COLOR_PAIR(5));
 
-            mvprintw(25, 2, "%d", *radio);
+            //mvprintw(25, 2, "%d", *radio);
 
             attron(COLOR_PAIR(7));
 
@@ -77,8 +100,37 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
 
             drawCameraMiniMap(camera, cameras);
             
+            //mvprintw(0, 0, "HALLWAY: %d | %d || %d", monsters[0].stage, monsters[0].currentTime, monsters[0].avgTime);
+            //mvprintw(1, 0, "LEFT: %d | %d || %d", monsters[1].stage, monsters[1].currentTime, monsters[1].avgTime);
+            //mvprintw(2, 0, "RIGHT: %d | %d || %d", monsters[2].stage, monsters[2].currentTime, monsters[2].avgTime);
             
+        }
 
+        //Draw the enemies in the right place
+
+        for (int i = 1; i < 3; i++)
+        {
+            if (camera == i) {
+                if (monsters[i].stage == 1)
+                    drawImage(25 + 4*(i-1), 6- (i-1), VENTCHAR_WIDTH, VENTCHAR_HEIGHT, monsters[i].image, 1);
+                else if (monsters[i].stage == 2)
+                    drawImage(25 + 4*(i-1), 10, VENTCHAR_WIDTH, VENTCHAR_HEIGHT, monsters[i].image, 2);
+            }
+        }
+        switch (camera) {
+        case 0:
+            if (monsters[0].stage == 0)
+                drawImage(50, 9, BLUECHAR_WIDTH, BLUECHAR_HEIGHT, blue_character, 1);
+            break;
+        case 3:
+            drawBar(68, 10, 22, 2, 110, 0, *radio, 0x87d7d7, 0xFFFFFF);
+            break;
+        }
+
+        
+
+        if (glitchTimer >= 3) {
+            glitchTimer = 0;
             refresh();
         }
 
@@ -92,7 +144,7 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
 
 
         if (key != ERR) {
-
+            resetScreen = true;
             switch (key) {
             case 'C':
             case 'c':
@@ -100,10 +152,18 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
                 break;
 
             case KEY_LEFT:
-                camera = (camera - 1 + CAMERAS) % CAMERAS;
+                if (camera == 0)
+                    camera = 1;
+                else
+                    camera = (camera - 1 + CAMERAS) % CAMERAS;
+                
                 break;
             case KEY_RIGHT:
-                camera = (camera + 1) % CAMERAS;
+                if (camera == 0)
+                    camera = 2;
+                else
+                    camera = (camera + 1) % CAMERAS;
+                
                 break;
             case KEY_UP:
                 if (camera == 1 || camera == 2)
@@ -112,12 +172,13 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
                     camera = 3;
                 break;
             case KEY_DOWN:
+                
                 camera = (camera + 1) % CAMERAS;
                 break;
 
 
             case '\t':
-                if(*radio < 100 && camera == 3)
+                if(*radio < 110 && camera == 3)
                     (*radio)++;
                 break;
 
@@ -128,7 +189,6 @@ void cameraWindow(int *radio, int *radioTimer, int FPS) {
 }
 
 void drawCameraMiniMap(int camera, Camera *cameras) {
-
 
     for (int c = 0; c < CAMERAS; c++)
     {
@@ -145,7 +205,6 @@ void drawCameraMiniMap(int camera, Camera *cameras) {
 
     for (int i = 0; i < 6; i++) {
         for (int j = 0; j < 2; j++) {
-
             drawHalfPixelHEX(27+ j, 40 + 50 + i, 0x6dcafc);
         }
     }
@@ -164,6 +223,57 @@ void drawCameraMiniMap(int camera, Camera *cameras) {
 
 }
 
+void monstersTick(Monster* monsters, bool* resetScreen, int showTime, bool* keepRunning) {
+
+    int staged = -1;
+
+    for (int i = 0; i < MONSTERS; i++)
+    {
+
+        //When he moves to the next stage
+        if (monsters[i].currentTime == 0) {
+
+            monsters[i].stage++;
+
+            int avgTime = monsters[i].avgTime; 
+
+            if (monsters[i].stage <= 0)
+                monsters[i].currentTime = (int)(avgTime*0.75) + random((int)(avgTime * 0.3), avgTime);
+
+            else if (monsters[i].stage == 1)
+                monsters[i].currentTime = random((int)(avgTime / 3), (int)(avgTime / 1.5));
+
+            else if (monsters[i].stage == 2)
+                monsters[i].currentTime = showTime;
+
+            else
+                *keepRunning = false;
+            
+            if (staged == -1 && monsters[i].stage != 2 && monsters[i].stage > 0)
+                staged = i;
+
+
+            *resetScreen = true;
+        }
+        else
+            monsters[i].currentTime--;
+
+    }
+
+    //If someone moved a to a new stage, we are delaying the others.
+    if (staged != -1) {
+        for (int i = 0; i < MONSTERS; i++)
+        {
+            if (staged != i && staged != -1 && monsters[i].stage < 2) {
+
+                int avgTime = monsters[i].avgTime;
+                monsters[i].currentTime += (int)(avgTime / 3) + random((int)(avgTime*0.35), (int)(avgTime*0.65));
+            }
+        }
+    }
+}
+
 int random(int min, int max) {
-    return rand() % (max-min+1) + min;
+    int value = rand() % (max - min + 1) + min;
+    return value;
 }
