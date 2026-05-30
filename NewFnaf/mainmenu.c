@@ -34,7 +34,7 @@ void showMainMenu() {
 
     char** options;
     //Choose the right Menu options
-    if (data.day == 0 && data.hour == 0 && data.battery == 100 && data.wins == 0 && data.radio == 110) 
+    if (data.day == 0 && data.hour == 0 && data.battery == 100 && data.radio == 110) 
         optionSize = 4;
     
 

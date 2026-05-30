@@ -29,8 +29,6 @@ void showGame(Data data) {
 
     d = data;
 
-    d.day = 4;
-
     atexit(exit);
 
     init_pair(5, getColor(255, 255, 255), getColor(29, 29, 29));
