@@ -10,6 +10,7 @@ void initHexColors() {
     }
 }
 
+//Draw a pixel : 2 chars (based on color pair number and x,y)
 void drawPixel(int y, int x, int colorpair) {
     attron(colorpair);
     mvaddch(y, x*2, ACS_BLOCK);
@@ -17,12 +18,14 @@ void drawPixel(int y, int x, int colorpair) {
     attroff(colorpair);
 }
 
+//Draw a half pixel : only one char  (based on color pair number and x,y)
 void drawHalfPixel(int y, int x, int colorpair) {
     attron(colorpair);
     mvaddch(y, x, ACS_BLOCK);
     attroff(colorpair);
 }
 
+//Draw a pixel : 2 chars (based on HEX color and x,y)
 void drawPixelHEX(int y, int x, int hex) {
 
     if (hex != -1) {
@@ -36,6 +39,7 @@ void drawPixelHEX(int y, int x, int hex) {
     }
 }
 
+//Draw a half pixel : only one char (based on HEX color and x,y)
 void drawHalfPixelHEX(int y, int x, int hex) {
 
     if (hex != -1) {
@@ -49,6 +53,7 @@ void drawHalfPixelHEX(int y, int x, int hex) {
     }
 }
 
+
 void HexToRGB(int hex, int *r,int *g,int *b) {
     /* >> moves (the number you chose) bits forward || &0xFF gets the last 2 digits in the hex
     * and in that way we can get a hex number that represent rgb colors: 0xRRGGBB
@@ -60,6 +65,7 @@ void HexToRGB(int hex, int *r,int *g,int *b) {
     
 }
 
+//Get the existing color in PDCURSES based on the RGB we put on.
 int getColor(int red, int green, int blue) {
 
     //we are converting the RGB number from 0-255 range for every color to 0-5 range.
@@ -83,6 +89,8 @@ int getColor(int red, int green, int blue) {
     return 16 + r * 36 + g * 6 + b;
 }
 
+
+//Draw an image based on the lists on images.c
 void drawImage(int xOffcet, int yOffcet, int width, int height, int* image, int size) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++)
