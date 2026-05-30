@@ -7,9 +7,11 @@
 #include "saver.h"
 
 
+//Load the data from the file we saved/ or create it.
 void loadData(Data* data) {
 
 	char path[300];
+	//Get the dir of: C:\Users\[Computer]\AppData\Local
 	char* localDir = getenv("LOCALAPPDATA");
 
 	if (localDir == NULL)
@@ -31,8 +33,12 @@ void loadData(Data* data) {
 	}
 }
 
+
+//Save the data and change the file  
 void saveData(Data data) {
 	char path[300];
+
+	//Get the dir of: C:\Users\[Computer]\AppData\Local
 	char* localDir = getenv("LOCALAPPDATA");
 
 	if (localDir == NULL)
