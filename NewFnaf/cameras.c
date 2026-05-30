@@ -9,6 +9,8 @@
 #include "game.h"
 #include <time.h>
 
+
+//Show the camera window
 void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Monster* monsters, int *currentTime, int *hourDelay) {
 
 
@@ -188,6 +190,7 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Mon
 	}
 }
 
+//Draw The MiniMap in the bottom of the camera-window to show which camera you are watching
 void drawCameraMiniMap(int camera, Camera *cameras) {
 
     for (int c = 0; c < CAMERAS; c++)
@@ -223,6 +226,8 @@ void drawCameraMiniMap(int camera, Camera *cameras) {
 
 }
 
+
+//Tick for the monsters only, so that we could access it from game.c and cameras.c both.
 void monstersTick(Monster* monsters, bool* resetScreen, int showTime, bool* keepRunning) {
 
     int staged = -1;
@@ -273,6 +278,8 @@ void monstersTick(Monster* monsters, bool* resetScreen, int showTime, bool* keep
     }
 }
 
+
+//A function that helps us get a radius of numbers and from it get a random number from it.
 int random(int min, int max) {
     int value = rand() % (max - min + 1) + min;
     return value;

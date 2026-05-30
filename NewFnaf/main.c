@@ -7,6 +7,7 @@
 #include "draw.h"
 #include "mainmenu.h"
 
+//Main Class
 int main() {
 
     srand(time(NULL));

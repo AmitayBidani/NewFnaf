@@ -16,16 +16,20 @@ static Data d;
 
 
 //Save Before Leaving (When pressing the exit button in windows)
-BOOL WINAPI consoleHandler(DWORD ctrlType) {
+bool quit() {
     saveData(d);
-    return TRUE;
+    return true;
 }
 
+
+//Show The Game Window
 void showGame(Data data) {
-    nodelay(stdscr, TRUE);
-    SetConsoleCtrlHandler(consoleHandler, true);
+    nodelay(stdscr, true);
+    SetConsoleCtrlHandler(quit, true);
 
     d = data;
+
+    d.day = 4;
 
     atexit(exit);
 
@@ -62,7 +66,7 @@ void showGame(Data data) {
         int value[3];
         for (int j = 0; j < 3; j++)
         {
-            value[j] = random(25 - (i * 5), 27 - (i * 5)) * FPS;
+            value[j] = random(20 - (i * 4), 22 - (i * 4)) * FPS;
         }
 
         days[i] = (Day){value[0], value[1], value[2], FPS * 2 - (i * 6)};
@@ -114,7 +118,7 @@ void showGame(Data data) {
                 while (1) {
                     k = getch();
                     if (k == 'Q' || k == 'q') {
-                        nodelay(stdscr, FALSE);
+                        nodelay(stdscr, false);
                         return;
                     }  
                 }
@@ -297,7 +301,7 @@ void showGame(Data data) {
             while (1) {
                 k = getch();
                 if (k == 'Q' || k == 'q') {
-                    nodelay(stdscr, FALSE);
+                    nodelay(stdscr, false);
                     return;
                 }
 
@@ -325,7 +329,7 @@ void showGame(Data data) {
             case 'Q':
             case 'q':
                 saveData(d);
-                nodelay(stdscr, FALSE);
+                nodelay(stdscr, false);
                 return;
                 break;
             case 'M':
@@ -356,7 +360,7 @@ void showGame(Data data) {
         
         napms(1000 / FPS);
     }
-    nodelay(stdscr, FALSE);
+    nodelay(stdscr, false);
     
 }
 
