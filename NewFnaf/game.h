@@ -2,7 +2,7 @@
 
 #include "saver.h"
 
-#define HOURTIME 2
+#define HOURTIME 30
 
 void showGame(Data data);
 
