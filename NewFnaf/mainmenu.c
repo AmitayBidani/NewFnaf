@@ -199,6 +199,7 @@ void howToPlay() {
         mvprintw(24, 1, "And the one in the hallway you might see him changing his position.");
         attroff(COLOR_PAIR(6));
 
+        mvprintw(26, 1, "MAKE SURE YOUR KEYBOARD IS IN ENGLISH!");
 
         mvprintw(29, 1, "PRESS Q TO GO BACK");
 
