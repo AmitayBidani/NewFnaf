@@ -28,7 +28,7 @@ int random(int min, int max);
 
 void monstersTick(Monster* monsters, bool* resetScreen, int showTime, bool* keepRunning);
 
-void cameraWindow(int* radio, int* radioTimer, long* time, int FPS, int day, Monster* monsters, int *currentTime, int *hourDelay);
+void cameraWindow(int* radio, int* radioTimer, int* battery, int* batteryTimer, int batterySpeed, int day, Monster* monsters, int* currentTime, int* hourDelay);
 
 void drawCameraMiniMap(int camera, Camera* cameras);
 
