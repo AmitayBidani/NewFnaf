@@ -11,7 +11,7 @@
 
 
 //Show the camera window
-void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Monster* monsters, int *currentTime, int *hourDelay) {
+void cameraWindow(int* radio, int* radioTimer, int* battery, int* batteryTimer, int batterySpeed, int day, Monster* monsters, int* currentTime, int* hourDelay) {
 
 
     int key = 0;
@@ -36,7 +36,16 @@ void cameraWindow(int *radio, int *radioTimer, long *time, int FPS, int day, Mon
         if (!keepRunning)
             return;
 
-        (*time)++;
+        batteryTimer++;
+        if (batteryTimer >= batterySpeed*4) {
+
+            (*battery)--;
+            batteryTimer = 0;
+
+            resetScreen = true;
+            if (*battery <= 0)
+                return;
+        };
 
         (*radioTimer)++;
         if (*radioTimer >= 22 - (day * 3)) {

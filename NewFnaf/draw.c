@@ -1,5 +1,6 @@
 #include <curses.h>
 #include "draw.h"
+#include <math.h>
 
 
 //Register all the colors from numbers as an pair we can use.
@@ -97,7 +98,6 @@ void drawImage(int xOffcet, int yOffcet, int width, int height, int* image, int 
         {
             int hex = image[y * width + x];
 
-
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -111,13 +111,17 @@ void drawImage(int xOffcet, int yOffcet, int width, int height, int* image, int 
 
 //this function is uesed to draw our battery bar    
 void drawBar(int x_0, int y_0, int width, int height, int max , int min , int now ,int color_in , int color_out) {
-   
+
     int box = (max - min) / width;
-    int bar = now / box;
+    int bar = ceil(now / box);
+
+    if (now > min && now < max)
+        bar++;
+
     for (int y = 0; y < height; y++) {
-        for (int x=0; x< width; x++) 
+        for (int x = 0; x < width; x++)
         {
-            if (x <= bar) {
+            if (x < bar && bar != 0) {
                 drawHalfPixelHEX(y + y_0, x_0 + x, color_in);
             }
             else {
@@ -125,4 +129,5 @@ void drawBar(int x_0, int y_0, int width, int height, int max , int min , int no
             }
         }
     }
+    
 }
