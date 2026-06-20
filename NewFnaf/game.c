@@ -66,7 +66,7 @@ void showGame(Data data) {
             value[j] = random(20 - (i * 4), 22 - (i * 4)) * FPS;
         }
 
-        days[i] = (Day){value[0], value[1], value[2], FPS - (i * 3) + 10};
+        days[i] = (Day){value[0], value[1], value[2], FPS - (i * 3) + 8};
     }
     
 
